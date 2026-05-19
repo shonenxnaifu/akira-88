@@ -16,16 +16,15 @@ export function isFingerExtended(landmarks, fingerName) {
     const tip = landmarks[indices.tip];
     const ip = landmarks[indices.ip];
     const mcp = landmarks[indices.mcp];
-    const cmp = landmarks[indices.cmp];
 
-    const tipDist = Math.hypot(tip.x - cmp.x, tip.y - cmp.y);
-    const ipDist = Math.hypot(ip.x - cmp.x, ip.y - cmp.y);
-    return tipDist > ipDist;
+    const tipDist = Math.hypot(tip.x - mcp.x, tip.y - mcp.y);
+    const ipDist = Math.hypot(ip.x - mcp.x, ip.y - mcp.y);
+
+    return tipDist > ipDist * 1.5;
   }
 
   const tip = landmarks[indices.tip];
   const pip = landmarks[indices.pip];
-  const mcp = landmarks[indices.mcp];
 
   return tip.y < pip.y;
 }
@@ -33,6 +32,17 @@ export function isFingerExtended(landmarks, fingerName) {
 export function countExtendedFingers(landmarks) {
   let count = 0;
   for (const finger of FINGER_NAMES) {
+    if (isFingerExtended(landmarks, finger)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+export function countFourFingers(landmarks) {
+  let count = 0;
+  const fingers = ['index', 'middle', 'ring', 'pinky'];
+  for (const finger of fingers) {
     if (isFingerExtended(landmarks, finger)) {
       count++;
     }

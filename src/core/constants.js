@@ -21,3 +21,10 @@ export const GESTURES = {
   RANDOMIZE_MODE: 'randomize_mode',
   NONE: 'none'
 };
+
+export const GESTURE_CONFIG = {
+  DEBOUNCE_MS: 500,
+  ROTATION_THRESHOLD: 0.3,
+  RANDOMIZE_DISTANCE_MIN: 0.1,
+  RANDOMIZE_DISTANCE_MAX: 0.6
+};

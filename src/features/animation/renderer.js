@@ -96,7 +96,11 @@ export function drawHandLandmarks(landmarksList, handednessList) {
 
   if (!landmarksList || landmarksList.length === 0) return;
 
-  landmarksList.forEach((landmarks) => {
+  landmarksList.forEach((landmarks, handIndex) => {
+    const handInfo = handednessList?.[handIndex];
+    const rawLabel = handInfo ? handInfo.label : 'Unknown';
+    const handLabel = rawLabel === 'Left' ? 'Right' : 'Left';
+    const color = handLabel === 'Left' ? 0x00E5FF : 0xFF6B35;
     const screenPoints = landmarks.map((lm) => landmarkToScreen(lm));
 
     for (const [i, j] of HAND_CONNECTIONS) {
