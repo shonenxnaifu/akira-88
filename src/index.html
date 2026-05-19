@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Techno Gesture Track</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <video id="webcam" style="display: none;"></video>
+
+  <div id="animation-container"></div>
+
+  <div id="ui-panel">
+    <button id="play-btn">▶ Play</button>
+
+    <div id="bpm-control">
+      <label for="bpm-input">BPM</label>
+      <input type="number" id="bpm-input" value="120" min="60" max="220">
+    </div>
+
+    <div id="element-status">
+      <div class="element" id="bass-status">Bass: <span class="status">OFF</span></div>
+      <div class="element" id="synth-status">Synth: <span class="status">OFF</span></div>
+      <div class="element" id="drum-status">Drum: <span class="status">OFF</span></div>
+    </div>
+
+    <div id="parameter-display" class="hidden">
+      <div>Pitch: <span id="pitch-value">0</span></div>
+      <div>Filter: <span id="filter-value">0</span></div>
+      <div>Rhythm: <span id="rhythm-value">0</span></div>
+    </div>
+
+    <div id="gesture-feedback">No gesture detected</div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
