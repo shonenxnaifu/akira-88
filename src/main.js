@@ -2,7 +2,7 @@ import { appState } from './core/state.js';
 import { BPM_MIN, BPM_MAX } from './core/constants.js';
 import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
-import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
+import { initAnimation, updateVideoTexture, drawHandLandmarks, clearHandLandmarks } from './features/animation/renderer.js';
 
 function init() {
   console.log('=== Techno Gesture Track - Initializing ===');
@@ -65,11 +65,14 @@ function startHandDetectionLoop() {
     frameCount++;
 
     if (landmarks.length === 0) {
+      clearHandLandmarks();
       if (frameCount % 3 === 0) {
         console.log(`[Frame ${frameCount}] No hands detected - show your hand to camera`);
       }
       return;
     }
+
+    drawHandLandmarks(landmarks, handedness);
 
     console.log(`[Frame ${frameCount}] 🖐 ${landmarks.length} hand(s) detected:`);
 
