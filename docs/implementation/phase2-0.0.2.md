@@ -41,13 +41,17 @@
 
 ## 3. Camera Feed via PixiJS (animation/renderer.js)
 
-**`initAnimation(videoEl)`** - Create PixiJS Application, append canvas to `#animation-container`. On video `playing` event, create mirrored sprite (`scale.x = -1`) and add to stage.
+**`initAnimation(videoEl)`** - Create PixiJS Application, append canvas to `#animation-container`. On video `playing` event, create mirrored sprite (`scale.x = -1`) and add to stage. Create `PIXI.Graphics` overlay for landmark drawing.
 
 **`fitVideoToScreen()`** - Calculate scale to cover screen while maintaining aspect ratio. Centers sprite on screen.
 
 **`handleResize()`** - Recalculate fit on window resize.
 
 **`updateVideoTexture()`** - Called every frame via PixiJS ticker to refresh video texture.
+
+**`drawHandLandmarks(landmarks, handedness)`** - Clear graphics overlay, draw skeleton lines and landmark dots for each detected hand. Converts normalized coordinates (0-1) to screen coordinates, accounts for mirror effect. Left hand = cyan, Right hand = warm orange.
+
+**`clearHandLandmarks()`** - Clear the graphics overlay when no hands detected.
 
 ---
 
@@ -168,6 +172,11 @@ All functions deferred to next iteration:
 - [x] Fit video to screen with correct aspect ratio
 - [x] Handle window resize
 - [x] Update texture every frame via ticker
+- [ ] Add `PIXI.Graphics` overlay layer for landmark drawing
+- [ ] Implement `drawHandLandmarks()` with skeleton lines and joint dots
+- [ ] Implement `clearHandLandmarks()` to clear overlay
+- [ ] Color-code hands (left=cyan, right=warm orange)
+- [ ] Test landmark overlay aligns with mirrored video
 
 ### Gesture Recognition (gestures.js) - DEFERRED
 - [ ] Implement `detectElementSelection()` - bass, synth, drum
@@ -209,6 +218,7 @@ All functions deferred to next iteration:
 - **`getLastResults()`**: Debug access to raw MediaPipe results
 - **Enhanced debug logging**: Frame-counted console output with confidence scores, finger counts, positions, rotations, and inter-hand distance
 - **Video event listeners**: `loadeddata` and `playing` events for reliable sprite creation
+- **Hand landmark visualization** (pending): `PIXI.Graphics` overlay with skeleton lines and joint dots, color-coded by hand (left=cyan, right=orange)
 
 ### Changed
 - **`minDetectionConfidence`**: Lowered from 0.7 to 0.5 for easier initial detection
