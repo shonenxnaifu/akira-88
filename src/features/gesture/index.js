@@ -1,5 +1,6 @@
 import { initDetector } from './detector.js';
 import { countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './hooks.js';
+import { drawHandLandmarks, clearHandLandmarks } from '../animation/renderer.js';
 
 let currentLandmarks = [];
 let currentHandedness = [];
@@ -10,6 +11,12 @@ export function initGesture(videoElement, callbacks) {
     lastResults = results;
     currentLandmarks = results.multiHandLandmarks || [];
     currentHandedness = results.multiHandedness || [];
+
+    if (currentLandmarks.length > 0) {
+      drawHandLandmarks(currentLandmarks, currentHandedness);
+    } else {
+      clearHandLandmarks();
+    }
 
     if (callbacks && callbacks.onResults) {
       callbacks.onResults(results);

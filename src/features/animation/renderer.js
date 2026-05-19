@@ -6,11 +6,8 @@ let videoSprite = null;
 let videoElement = null;
 let landmarkGraphics = null;
 
-const HAND_COLORS = {
-  Left: 0x00E5FF,
-  Right: 0xFF6B35,
-  Unknown: 0xE8D5B7
-};
+const LINE_COLOR = 0xDB69D2;
+const DOT_COLOR = 0x000000;
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -99,11 +96,7 @@ export function drawHandLandmarks(landmarksList, handednessList) {
 
   if (!landmarksList || landmarksList.length === 0) return;
 
-  landmarksList.forEach((landmarks, handIndex) => {
-    const handInfo = handednessList?.[handIndex];
-    const handLabel = handInfo ? handInfo.hand : 'Unknown';
-    const color = HAND_COLORS[handLabel] || HAND_COLORS.Unknown;
-
+  landmarksList.forEach((landmarks) => {
     const screenPoints = landmarks.map((lm) => landmarkToScreen(lm));
 
     for (const [i, j] of HAND_CONNECTIONS) {
@@ -111,21 +104,21 @@ export function drawHandLandmarks(landmarksList, handednessList) {
       const p2 = screenPoints[j];
       if (!p1 || !p2) continue;
 
-      landmarkGraphics.lineStyle(2, color, 0.8);
+      landmarkGraphics.lineStyle(2, LINE_COLOR, 0.8);
       landmarkGraphics.moveTo(p1.x, p1.y);
       landmarkGraphics.lineTo(p2.x, p2.y);
     }
 
     for (const point of screenPoints) {
       if (!point) continue;
-      landmarkGraphics.beginFill(color, 0.9);
+      landmarkGraphics.beginFill(DOT_COLOR, 0.9);
       landmarkGraphics.drawCircle(point.x, point.y, 4);
       landmarkGraphics.endFill();
     }
 
     const wrist = screenPoints[0];
     if (wrist) {
-      landmarkGraphics.beginFill(color, 1);
+      landmarkGraphics.beginFill(DOT_COLOR, 1);
       landmarkGraphics.drawCircle(wrist.x, wrist.y, 6);
       landmarkGraphics.endFill();
     }
