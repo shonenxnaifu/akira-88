@@ -26,14 +26,14 @@ A real-time web app that allows users to create and modify techno tracks using h
 ## Gesture Definitions
 | Gesture | Hand Configuration | Action |
 |---------|-------------------|--------|
-| Select Bass | Both hands: only index fingers extended | Select bass element |
-| Select Synth | Both hands: only thumbs extended | Select synth element |
-| Select Drum | Both hands: index + thumb extended | Select drum element |
-| Play/Stop | Both hands: all fingers extended (open palms) | Toggle playback |
-| Volume Up | Both hands: rotate clockwise | Increase volume |
-| Volume Down | Both hands: rotate counter-clockwise | Decrease volume |
-| Mute Toggle | Both hands: closed fists | Toggle mute |
-| Randomize | Move selected hand rapidly while element active | Randomize parameters |
+| Select Bass | Right Hand: only index fingers extended | Select bass element |
+| Select Synth | Right hand: only thumbs extended | Select synth element |
+| Select Drum | Right hand: index + thumb extended | Select drum element |
+| Play/Stop | Left hand: all fingers extended (open palms) | Toggle playback |
+| Volume Up | Left hand: rotate clockwise | Increase volume |
+| Volume Down | Left hand: rotate counter-clockwise | Decrease volume |
+| Mute Toggle | Left Hand: closed fists | Toggle mute |
+| Randomize | palm hand position facing each others, move close or away, or rotate palm forward backward to randomize parameters while instrument active | Randomize parameters |
 
 ---
 
@@ -107,6 +107,10 @@ Each element has unique electrical effect between hands:
 
 ## Open Questions
 1. Should there be a BPM selector gesture?
+   answer: NO, there will be UI TO control BPM, input number with arrow up and down and input manual
 2. Should animations persist when element is stopped?
+   answer: animation will stop if current selected instrument is stop
 3. Should there be a reset gesture to stop all elements?
+   answer: no
 4. Mobile support? (Currently designed for laptop webcam)
+   answer: no, this app only build for desktop
