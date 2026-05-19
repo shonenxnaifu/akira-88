@@ -5,7 +5,7 @@
 - **Duration**: 4-6 hours
 - **Goal**: Implement MediaPipe Hands detection, webcam setup, hand landmark processing, and real-time camera feed via PixiJS
 - **Prerequisites**: Phase 1 completed
-- **Status**: Partially completed (camera feed + hand detection working, gesture recognition pending)
+- **Status**: Partially completed (camera feed + hand detection + landmark visualization working, gesture recognition pending)
 
 ---
 
@@ -49,7 +49,7 @@
 
 **`updateVideoTexture()`** - Called every frame via PixiJS ticker to refresh video texture.
 
-**`drawHandLandmarks(landmarks, handedness)`** - Clear graphics overlay, draw skeleton lines and landmark dots for each detected hand. Converts normalized coordinates (0-1) to screen coordinates, accounts for mirror effect. Left hand = cyan, Right hand = warm orange.
+**`drawHandLandmarks(landmarks, handedness)`** - Clear graphics overlay, draw skeleton lines (purple #DB69D2) and landmark dots (black) for each detected hand. Converts normalized coordinates (0-1) to screen coordinates, accounts for mirror effect. Draws at MediaPipe native frame rate (~30fps) via onResults callback.
 
 **`clearHandLandmarks()`** - Clear the graphics overlay when no hands detected.
 
@@ -143,6 +143,7 @@ All functions deferred to next iteration:
 - [ ] Parameter display showing values during randomize (deferred)
 - [ ] Gesture debouncing implemented (deferred)
 - [x] Real-time camera feed via PixiJS (mirrored, aspect-ratio fitted)
+- [x] Hand landmark visualization overlay (skeleton lines + joint dots, real-time)
 - [x] All edge cases handled (detection level)
 
 ---
@@ -172,11 +173,11 @@ All functions deferred to next iteration:
 - [x] Fit video to screen with correct aspect ratio
 - [x] Handle window resize
 - [x] Update texture every frame via ticker
-- [ ] Add `PIXI.Graphics` overlay layer for landmark drawing
-- [ ] Implement `drawHandLandmarks()` with skeleton lines and joint dots
-- [ ] Implement `clearHandLandmarks()` to clear overlay
-- [ ] Color-code hands (left=cyan, right=warm orange)
-- [ ] Test landmark overlay aligns with mirrored video
+- [x] Add `PIXI.Graphics` overlay layer for landmark drawing
+- [x] Implement `drawHandLandmarks()` with skeleton lines (purple #DB69D2) and joint dots (black)
+- [x] Implement `clearHandLandmarks()` to clear overlay
+- [x] Landmark drawing runs at MediaPipe native frame rate (~30fps) via onResults callback
+- [x] Test landmark overlay aligns with mirrored video
 
 ### Gesture Recognition (gestures.js) - DEFERRED
 - [ ] Implement `detectElementSelection()` - bass, synth, drum
@@ -218,7 +219,8 @@ All functions deferred to next iteration:
 - **`getLastResults()`**: Debug access to raw MediaPipe results
 - **Enhanced debug logging**: Frame-counted console output with confidence scores, finger counts, positions, rotations, and inter-hand distance
 - **Video event listeners**: `loadeddata` and `playing` events for reliable sprite creation
-- **Hand landmark visualization** (pending): `PIXI.Graphics` overlay with skeleton lines and joint dots, color-coded by hand (left=cyan, right=orange)
+- **Hand landmark visualization**: `PIXI.Graphics` overlay with skeleton lines (purple #DB69D2) and joint dots (black), drawn at MediaPipe native frame rate (~30fps) via onResults callback
+- **Landmark drawing in onResults**: Moved from setInterval to onResults callback to eliminate 2-second delay
 
 ### Changed
 - **`minDetectionConfidence`**: Lowered from 0.7 to 0.5 for easier initial detection
