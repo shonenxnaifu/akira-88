@@ -14,7 +14,6 @@ export const GESTURES = {
   SELECT_BASS: 'select_bass',
   SELECT_SYNTH: 'select_synth',
   SELECT_DRUM: 'select_drum',
-  PLAY_STOP: 'play_stop',
   MUTE_TOGGLE: 'mute_toggle',
   RANDOMIZE_MODE: 'randomize_mode',
   NONE: 'none'

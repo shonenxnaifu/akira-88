@@ -20,7 +20,6 @@ const GESTURE_LABELS = {
   [GESTURES.SELECT_BASS]: 'Select Bass',
   [GESTURES.SELECT_SYNTH]: 'Select Synth',
   [GESTURES.SELECT_DRUM]: 'Select Drum',
-  [GESTURES.PLAY_STOP]: 'Play/Stop',
   [GESTURES.MUTE_TOGGLE]: 'Mute Toggle',
   [GESTURES.RANDOMIZE_MODE]: 'Randomize Mode',
   [GESTURES.NONE]: 'No gesture detected'
@@ -120,9 +119,6 @@ function handleGestureDetected(result) {
       console.log('[handleGestureDetected] Selecting drum');
       selectElement('drum');
       break;
-    case GESTURES.PLAY_STOP:
-      togglePlayStop();
-      break;
     case GESTURES.MUTE_TOGGLE:
       toggleMute();
       break;
@@ -159,14 +155,6 @@ function selectElement(element) {
   appState.elements[element].active = true;
   updateElementStatus();
   console.log(`Selected element: ${element}`);
-}
-
-function togglePlayStop() {
-  appState.isPlaying = !appState.isPlaying;
-  const playBtn = document.getElementById('play-btn');
-  playBtn.textContent = appState.isPlaying ? '⏸ Stop' : '▶ Play';
-  updatePrevState({ isPlaying: appState.isPlaying });
-  console.log('Play state (gesture):', appState.isPlaying);
 }
 
 function toggleMute() {

@@ -32,22 +32,6 @@ export function detectElementSelection(hand, handedness) {
   return null;
 }
 
-export function detectPlayStop(hand, handedness) {
-  if (handedness !== 'Left') return null;
-
-  const thumbExtended = isFingerExtended(hand, 'thumb');
-  const indexExtended = isFingerExtended(hand, 'index');
-  const middleExtended = isFingerExtended(hand, 'middle');
-  const ringExtended = isFingerExtended(hand, 'ring');
-  const pinkyExtended = isFingerExtended(hand, 'pinky');
-
-  if (thumbExtended && !indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
-    return 'play_stop';
-  }
-
-  return null;
-}
-
 export function detectMuteToggle(hand, handedness) {
   if (handedness !== 'Right') return null;
 
@@ -126,11 +110,6 @@ export function recognizeGesture(results, prevState) {
 
     const mute = detectMuteToggle(rightHand, 'Right');
     if (mute) return { gesture: mute, params: null };
-  }
-
-  if (leftHand) {
-    const playStop = detectPlayStop(leftHand, 'Left');
-    if (playStop) return { gesture: playStop, params: null };
   }
 
   return { gesture: 'none', params: null };
