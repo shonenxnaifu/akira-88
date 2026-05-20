@@ -149,21 +149,21 @@
 
 ## Verification & Tracking
 
-### 9. Verification Steps
+### 1. Verification Steps
 
-#### 9.1 Webcam
+#### 1 Webcam
 - [x] Webcam starts on page load
 - [x] Video element receives stream
 - [x] No permission errors
 - [x] Camera feed displays as mirrored view via PixiJS
 - [x] Video fits screen with correct aspect ratio (no stretching)
 
-#### 9.2 Hand Detection
+#### 2 Hand Detection
 - [x] Show one hand → landmarks detected, console logs finger count, position, rotation
 - [x] Show two hands → both detected, console logs distance between hands
 - [x] No hands → "No hands detected" message
 
-#### 9.3 Gestures
+#### 3 Gestures
 - [x] Right hand index only → UI shows "Select Bass", bass status updates to "ON"
 - [x] Right hand index + middle → UI shows "Select Synth", synth status updates
 - [x] Right hand index + middle + ring → UI shows "Select Drum", drum status updates
@@ -172,20 +172,20 @@
 - [x] Both hands open (crystal ball pose) → UI shows "Randomize Mode", parameter display appears with pitch/filter/rhythm values
 - [x] Close one hand from crystal ball pose → parameter display hides, randomize mode exits
 
-#### 9.4 Volume Sliders (Manual UI)
+#### 4 Volume Sliders (Manual UI)
 - [x] Master slider: drag left/right, value updates (0-100), `appState.masterVolume` syncs
 - [x] Bass slider: drag left/right, value updates independently
 - [x] Synth slider: drag left/right, value updates independently
 - [x] Drum slider: drag left/right, value updates independently
 
-#### 9.5 Edge Cases
+#### 5 Edge Cases
 - [x] No hands → gesture feedback shows "No gesture detected"
 - [x] Hand leaves frame → state persists (selected element, play state remain)
 - [x] Rapid gestures → debounced correctly (500ms, same gesture ignored, different gestures pass)
 - [x] Randomize mode priority → when both hands open + element playing, randomize takes precedence over element selection/mute
 - [x] Randomize mode exit → when hands leave crystal ball pose, `randomizeMode` set to false, parameter display hides
 
-### 10. Task/Todo List
+### 2. Task/Todo List
 
 #### Setup & Detection
 - [x] Install and import MediaPipe Hands dependencies
