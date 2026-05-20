@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 import { getBassSynth } from './instruments/bass.js';
 
-const BASS_PATTERN = ['C2', null, 'C2', 'E2', null, 'G2', 'C2', null];
+const BASS_PATTERN = ['C2', 'H2', 'C2', 'H2', 'C2', 'H2', 'C2', 'H2'];
 
 let bassSeq = null;
 let isStarted = false;

@@ -17,15 +17,15 @@ export function createBass() {
   volume = new Tone.Volume(0);
 
   synth = new Tone.MembraneSynth({
-    pitchDecay: 0.05,
-    octaves: 4,
-    oscillator: { type: 'sine' },
+    pitchDecay: 0.03,
+    octaves: 5,
+    oscillator: { type: 'fatsine' },
     envelope: {
-      attack: 0.001,
-      decay: 0.4,
-      sustain: 0.01,
-      release: 1.4,
-      attackCurve: 'exponential'
+      attack: 3,
+      decay: 0.3,
+      sustain: 0.7,
+      release: 3,
+      attackCurve: 'bounce'
     }
   }).connect(filter);
 
