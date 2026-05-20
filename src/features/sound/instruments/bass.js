@@ -1,7 +1,7 @@
-import * as Tone from 'tone';
-import { getMasterVolume } from '../engine.js';
+import * as Tone from "tone";
+import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [65.41, 73.42, 82.41, 87.31, 98.00, 110.00, 123.47, 130.81];
+const BASS_NOTES = [65.41, 73.42, 82.41, 87.31, 98.0, 110.0, 123.47, 130.81];
 
 let synth = null;
 let filter = null;
@@ -11,37 +11,39 @@ let isCreated = false;
 export function createBass() {
   if (isCreated) return;
 
-  filter = new Tone.Filter(500, 'lowpass');
-  filter.Q.value = 5;
+  filter = new Tone.Filter(250, "lowpass");
+  filter.Q.value = 8;
 
-  const distortion = new Tone.Distortion(0.4);
+  const distortion = new Tone.Distortion(0.7);
 
-  const delay = new Tone.FeedbackDelay('8n', 0.25);
-  delay.wet.value = 0.2;
+  const bitcrusher = new Tone.BitCrusher(4);
 
-  volume = new Tone.Volume(0);
+  const delay = new Tone.FeedbackDelay("4n", 0.4);
+  delay.wet.value = 0.65;
+
+  volume = new Tone.Volume(2);
 
   synth = new Tone.MembraneSynth({
-    pitchDecay: 0.05,
-    octaves: 6,
-    oscillator: { type: 'square' },
+    pitchDecay: 0.01,
+    octaves: 5,
+    oscillator: { type: "square" },
     envelope: {
       attack: 0.001,
-      decay: 0.2,
-      sustain: 0.0,
-      release: 0.8,
-      attackCurve: 'linear',
-      decayCurve: 'linear'
-    }
+      decay: 0.1,
+      sustain: 0.02,
+      release: 0.1,
+      attackCurve: "linear",
+    },
   }).connect(distortion);
 
-  distortion.connect(filter);
+  distortion.connect(bitcrusher);
+  bitcrusher.connect(filter);
   filter.connect(delay);
   delay.connect(volume);
   volume.connect(getMasterVolume());
 
   isCreated = true;
-  console.log('Bass instrument created (hard techno + delay)');
+  console.log("Bass instrument created (Monrella-style industrial + echo)");
 }
 
 export function updateBassParams(params) {
