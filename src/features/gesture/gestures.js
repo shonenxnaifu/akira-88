@@ -1,6 +1,5 @@
 import { countExtendedFingers, countFourFingers, isFingerExtended, calculateHandRotation, calculateHandDistance, isPalmFacingCamera } from './hooks.js';
 
-const ROTATION_THRESHOLD = 0.3;
 const RANDOMIZE_DISTANCE_MIN = 0.1;
 const RANDOMIZE_DISTANCE_MAX = 0.6;
 
