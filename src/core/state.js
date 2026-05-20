@@ -3,6 +3,7 @@ export const appState = {
   selectedElement: null,
   bpm: 120,
   masterVolume: 1.0,
+  audioInitialized: false,
   elements: {
     bass: { active: false, volume: 1.0, muted: false },
     synth: { active: false, volume: 1.0, muted: false },

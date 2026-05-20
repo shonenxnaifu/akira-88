@@ -3,6 +3,7 @@ import { BPM_MIN, BPM_MAX, GESTURES } from './core/constants.js';
 import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
 import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
+import { initAudio, startTransport, stopTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, stopSequencers } from './features/sound/index.js';
 
 const PARAM_LABELS = {
   bass: ['Pitch', 'Filter', 'Resonance'],
@@ -49,6 +50,7 @@ function handleMasterVolume(e) {
   const value = parseInt(e.target.value);
   appState.masterVolume = value / 100;
   document.getElementById('volume-master-value').textContent = value;
+  setMasterVolume(appState.masterVolume);
   console.log('Master volume:', appState.masterVolume.toFixed(2));
 }
 
@@ -57,13 +59,33 @@ function handleElementVolume(e) {
   const value = parseInt(e.target.value);
   appState.elements[el].volume = value / 100;
   document.getElementById(`volume-${el}-value`).textContent = value;
+
+  if (el === 'bass') setBassVolume(appState.elements.bass.volume);
+
   console.log(`${el} volume:`, appState.elements[el].volume.toFixed(2));
 }
 
-function handlePlayClick() {
+async function handlePlayClick() {
+  if (!isAudioInitialized()) {
+    await initAudio();
+    createBass();
+    createSequencers();
+    appState.audioInitialized = true;
+    console.log('Audio initialized, bass instrument created');
+  }
+
   appState.isPlaying = !appState.isPlaying;
   const playBtn = document.getElementById('play-btn');
   playBtn.textContent = appState.isPlaying ? '⏸ Stop' : '▶ Play';
+
+  if (appState.isPlaying) {
+    startTransport(appState.bpm);
+    startSequencers();
+  } else {
+    stopSequencers();
+    stopTransport();
+  }
+
   updatePrevState({ isPlaying: appState.isPlaying });
   console.log('Play state:', appState.isPlaying);
 }
@@ -73,6 +95,7 @@ function handleBPMChange(e) {
   value = clamp(value, BPM_MIN, BPM_MAX);
   appState.bpm = value;
   e.target.value = value;
+  setBPM(value);
   console.log('BPM:', appState.bpm);
 }
 
@@ -161,6 +184,9 @@ function toggleMute() {
   if (appState.selectedElement) {
     appState.elements[appState.selectedElement].muted = !appState.elements[appState.selectedElement].muted;
     updateElementStatus();
+
+    if (appState.selectedElement === 'bass') setBassMute(appState.elements.bass.muted);
+
     console.log(`Mute toggle for ${appState.selectedElement}:`, appState.elements[appState.selectedElement].muted);
   }
 }
@@ -252,6 +278,20 @@ function startHandDetectionLoop() {
       console.log(`  Distance between hands: ${dist.toFixed(3)}`);
     }
   }, 2000);
+
+  startParameterLoop();
+}
+
+function startParameterLoop() {
+  function applyParams() {
+    if (appState.randomizeMode && appState.selectedElement === 'bass') {
+      updateBassParams(appState.parameters.bass);
+    }
+
+    requestAnimationFrame(applyParams);
+  }
+
+  requestAnimationFrame(applyParams);
 }
 
 init();
