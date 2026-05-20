@@ -9,7 +9,9 @@
 
 ---
 
-## 1. MediaPipe Hands Setup (detector.js)
+## Implementation Reference
+
+### 1. MediaPipe Hands Setup (detector.js)
 
 **`createHandsInstance(onResults)`** - Initialize MediaPipe Hands with `modelComplexity: 1`, `maxNumHands: 2`, `minDetectionConfidence: 0.5`, `minTrackingConfidence: 0.5`. Uses jsDelivr CDN for model files.
 
@@ -17,9 +19,7 @@
 
 **`initDetector(videoElement, onResults)`** - Public API entry point. Creates Hands instance and starts webcam. Returns promise.
 
----
-
-## 2. Hand Landmark Processing (hooks.js)
+### 2. Hand Landmark Processing (hooks.js)
 
 **`isFingerExtended(landmarks, fingerName)`** - Thumb uses distance comparison (tip-to-mcp vs ip-to-mcp with 1.5x threshold). Other fingers use `tip.y < pip.y` (y=0 is top of screen).
 
@@ -39,9 +39,7 @@
 
 **`getHandCentroid(landmarks)`** - Average of all landmark x,y coordinates.
 
----
-
-## 3. Camera Feed via PixiJS (animation/renderer.js)
+### 3. Camera Feed via PixiJS (animation/renderer.js)
 
 **`initAnimation(videoEl)`** - Create PixiJS Application, append canvas to `#animation-container`. On video `playing` event, create mirrored sprite (`scale.x = -1`) and add to stage. Create `PIXI.Graphics` overlay for landmark drawing.
 
@@ -55,9 +53,7 @@
 
 **`clearHandLandmarks()`** - Clear the graphics overlay when no hands detected.
 
----
-
-## 4. Gesture Recognition (gestures.js)
+### 4. Gesture Recognition (gestures.js)
 
 **`detectElementSelection(hand, handedness)`** - Right hand gestures using `countFourFingers()`:
 - 1 finger (index) → `select_bass`
@@ -80,9 +76,7 @@
 2. Right hand: element selection → mute toggle
 3. Left hand: play/stop
 
----
-
-## 5. Feature Public API (index.js)
+### 5. Feature Public API (index.js)
 
 **`initGesture(videoElement, callbacks)`** - Initialize detector, start webcam. Accepts `{onReady, onError, onGesture, onResults}` callbacks. Returns cleanup function.
 
@@ -94,9 +88,7 @@
 
 **Re-exports**: `countExtendedFingers`, `countFourFingers`, `isFingerExtended`, `getHandedness`, `getHandCentroid`, `calculateHandRotation`, `calculateHandDistance`, `recognizeGesture`
 
----
-
-## 6. Integration (main.js)
+### 6. Integration (main.js)
 
 **`init()`** - Application bootstrap.
 
@@ -125,14 +117,12 @@
 
 **`updateParameterDisplay(params)` / `hideParameterDisplay()`** - Shows/hides pitch/filter/rhythm values.
 
----
+### 7. State & Constants
 
-## 7. State & Constants
-
-### Constants (core/constants.js)
+**Constants** (`core/constants.js`)
 - `GESTURE_CONFIG`: `{ DEBOUNCE_MS: 500, RANDOMIZE_DISTANCE_MIN: 0.1, RANDOMIZE_DISTANCE_MAX: 0.6 }`
 
-### State (core/state.js)
+**State** (`core/state.js`)
 - `isPlaying`: boolean
 - `selectedElement`: 'bass' | 'synth' | 'drum' | null
 - `bpm`: number (60-220)
@@ -142,14 +132,12 @@
 - `parameters`: { pitch, filter, rhythm }
 - `handAngles`: { left, right }
 
-### Internal Tracking (index.js)
+**Internal Tracking** (`index.js`)
 - `prevState`: synced from appState for gesture recognition context
 - `lastGestureTime`, `lastGestureType`: for debouncing
 - Debounce: 500ms between same gesture triggers; randomize mode exempt
 
----
-
-## 8. CSS
+### 8. CSS
 
 **UI Panel z-index**: 100 (above PixiJS canvas at z-index 0).
 
@@ -159,21 +147,23 @@
 
 ---
 
-## 9. Verification Steps
+## Verification & Tracking
 
-### 9.1 Webcam
+### 9. Verification Steps
+
+#### 9.1 Webcam
 - [x] Webcam starts on page load
 - [x] Video element receives stream
 - [x] No permission errors
 - [x] Camera feed displays as mirrored view via PixiJS
 - [x] Video fits screen with correct aspect ratio (no stretching)
 
-### 9.2 Hand Detection
+#### 9.2 Hand Detection
 - [x] Show one hand → landmarks detected, console logs finger count, position, rotation
 - [x] Show two hands → both detected, console logs distance between hands
 - [x] No hands → "No hands detected" message
 
-### 9.3 Gestures
+#### 9.3 Gestures
 - [x] Right hand index only → UI shows "Select Bass", bass status updates to "ON"
 - [x] Right hand index + middle → UI shows "Select Synth", synth status updates
 - [x] Right hand index + middle + ring → UI shows "Select Drum", drum status updates
@@ -182,30 +172,28 @@
 - [x] Both hands open (crystal ball pose) → UI shows "Randomize Mode", parameter display appears with pitch/filter/rhythm values
 - [x] Close one hand from crystal ball pose → parameter display hides, randomize mode exits
 
-### 9.4 Volume Sliders (Manual UI)
+#### 9.4 Volume Sliders (Manual UI)
 - [x] Master slider: drag left/right, value updates (0-100), `appState.masterVolume` syncs
 - [x] Bass slider: drag left/right, value updates independently
 - [x] Synth slider: drag left/right, value updates independently
 - [x] Drum slider: drag left/right, value updates independently
 
-### 9.5 Edge Cases
+#### 9.5 Edge Cases
 - [x] No hands → gesture feedback shows "No gesture detected"
 - [x] Hand leaves frame → state persists (selected element, play state remain)
 - [x] Rapid gestures → debounced correctly (500ms, same gesture ignored, different gestures pass)
 - [x] Randomize mode priority → when both hands open + element playing, randomize takes precedence over element selection/mute
 - [x] Randomize mode exit → when hands leave crystal ball pose, `randomizeMode` set to false, parameter display hides
 
----
+### 10. Task/Todo List
 
-## 10. Task/Todo List
-
-### Setup & Detection
+#### Setup & Detection
 - [x] Install and import MediaPipe Hands dependencies
 - [x] Create `detector.js` with Hands initialization
 - [x] Implement webcam stream setup
 - [x] Test webcam permission and video feed
 
-### Hand Processing (hooks.js)
+#### Hand Processing (hooks.js)
 - [x] Implement `isFingerExtended()` for all 5 fingers
 - [x] Implement `countExtendedFingers()`
 - [x] Implement `countFourFingers()` (excludes thumb)
@@ -216,7 +204,7 @@
 - [x] Implement `arePalmsFacingEachOther()` for crystal ball pose
 - [x] Implement `getHandCentroid()` for position tracking
 
-### Camera Feed (animation/renderer.js)
+#### Camera Feed (animation/renderer.js)
 - [x] Initialize PixiJS Application
 - [x] Create video sprite from webcam element
 - [x] Mirror video display (`scale.x = -1`)
@@ -229,7 +217,7 @@
 - [x] Landmark drawing runs at MediaPipe native frame rate (~30fps) via onResults callback
 - [x] Test landmark overlay aligns with mirrored video
 
-### Gesture Recognition (gestures.js)
+#### Gesture Recognition (gestures.js)
 - [x] Implement `detectElementSelection()` - bass (1 finger), synth (2 fingers), drum (3 fingers)
 - [x] Implement `detectPlayStop()` - left hand thumb only
 - [x] Implement `detectMuteToggle()` - right hand fist
@@ -237,7 +225,7 @@
 - [x] Implement `calculateRandomizeParams()` - pitch, filter, rhythm
 - [x] Implement `recognizeGesture()` - main entry with priority logic
 
-### Integration
+#### Integration
 - [x] Update `index.js` with full public API including `onGesture` callback
 - [x] Update `main.js` to import and initialize gesture feature
 - [x] Create `handleGestureDetected()` in main.js
@@ -251,7 +239,7 @@
 - [x] Add master + per-element volume sliders to UI
 - [x] Remove volume gesture, replace with manual slider control
 
-### Testing
+#### Testing
 - [x] Test webcam starts correctly
 - [x] Test single hand detection
 - [x] Test two-hand detection
@@ -266,10 +254,12 @@
 
 ---
 
-## 11. Changelog
+## Changelog
 
 ### v0.0.3 → v0.0.4 (Restructure)
 - Removed redundant Deliverables Checklist section
+- Grouped sections 1-8 under "Implementation Reference"
+- Grouped sections 9-10 under "Verification & Tracking"
 - Merged State & Constants into single section with full state shape
 - Consolidated CSS section (removed "Fixes" label, documented current styles)
 - Updated Verification Steps to be more specific and actionable for manual testing
