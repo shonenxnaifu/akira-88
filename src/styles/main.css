@@ -146,6 +146,22 @@
   display: none;
 }
 
+#parameter-display .param-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+#parameter-display > div {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+#parameter-display span[id$="-value"] {
+  font-family: monospace;
+  color: var(--text-primary);
+}
+
 #gesture-feedback {
   margin-top: 12px;
   padding-top: 12px;

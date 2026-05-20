@@ -66,10 +66,10 @@
 
 **`detectRandomizeMode(leftHand, rightHand)`** - Both hands open (≥4 fingers each) → activates randomize mode.
 
-**`calculateRandomizeParams(leftHand, rightHand)`** - Continuous parameters:
-- `pitch`: Left hand rotation (mapped -1 to 1)
-- `filter`: Hand distance (mapped 0 to 1, range 0.1-0.6)
-- `rhythm`: Right hand rotation (mapped -1 to 1)
+**`calculateRandomizeParams(leftHand, rightHand)`** - Continuous parameters per instrument:
+- **Bass**: `pitch` (left rotation), `filter` (hand distance), `resonance` (right rotation)
+- **Synth**: `detune` (left rotation), `filter` (hand distance), `lfoRate` (right rotation)
+- **Drum**: `decay` (left rotation), `velocity` (hand distance), `noiseFilter` (right rotation)
 
 **`recognizeGesture(results, prevState)`** - Main entry point. Priority order:
 1. Randomize mode (if element selected + playing)
@@ -129,7 +129,10 @@
 - `masterVolume`: number (0-1)
 - `elements`: { bass, synth, drum } each with { active, volume, muted }
 - `randomizeMode`: boolean
-- `parameters`: { pitch, filter, rhythm }
+- `parameters`: per-instrument objects:
+  - `bass`: { pitch, filter, resonance }
+  - `synth`: { detune, filter, lfoRate }
+  - `drum`: { decay, velocity, noiseFilter }
 - `handAngles`: { left, right }
 
 **Internal Tracking** (`index.js`)
@@ -169,7 +172,7 @@
 - [x] Right hand index + middle + ring → UI shows "Select Drum", drum status updates
 - [x] Left hand thumb only → UI shows "Play/Stop", play button toggles
 - [x] Right hand fist → UI shows "Mute Toggle", selected element mutes/unmutes
-- [x] Both hands open (crystal ball pose) → UI shows "Randomize Mode", parameter display appears with pitch/filter/rhythm values
+- [x] Both hands open (crystal ball pose) → UI shows "Randomize Mode", parameter display appears with selected instrument's parameters (Bass: Pitch/Filter/Resonance, Synth: Detune/Filter/LFO Rate, Drum: Decay/Velocity/Noise Filter)
 - [x] Close one hand from crystal ball pose → parameter display hides, randomize mode exits
 
 #### 4 Volume Sliders (Manual UI)
@@ -256,7 +259,7 @@
 
 ## Changelog
 
-### v0.0.3 → v0.0.4 (Restructure)
+### v0.0.3 → v0.0.4 (Restructure + Parameter Redesign)
 - Removed redundant Deliverables Checklist section
 - Grouped sections 1-8 under "Implementation Reference"
 - Grouped sections 9-10 under "Verification & Tracking"
@@ -264,6 +267,13 @@
 - Consolidated CSS section (removed "Fixes" label, documented current styles)
 - Updated Verification Steps to be more specific and actionable for manual testing
 - Fixed duplicate `handleMasterVolume`/`handleElementVolume` entries in Integration section
+- **Parameter redesign**: Changed from generic `pitch/filter/rhythm` to instrument-specific parameters:
+  - Bass: `pitch`, `filter`, `resonance`
+  - Synth: `detune`, `filter`, `lfoRate`
+  - Drum: `decay`, `velocity`, `noiseFilter`
+- `calculateRandomizeParams()` now returns per-instrument parameter objects
+- `updateParameterDisplay()` dynamically renders labels based on selected instrument
+- Parameter display HTML now generated dynamically (removed hardcoded labels)
 - Updated version to 0.0.4, status to "Completed"
 
 ### v0.0.2 → v0.0.3 (Previous)

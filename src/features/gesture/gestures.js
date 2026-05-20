@@ -78,11 +78,15 @@ export function calculateRandomizeParams(leftHand, rightHand) {
   const rightRotation = calculateHandRotation(rightHand);
   const handDistance = calculateHandDistance(leftHand, rightHand);
 
-  const pitch = Math.max(-1, Math.min(1, leftRotation / Math.PI));
-  const filter = Math.max(0, Math.min(1, (handDistance - RANDOMIZE_DISTANCE_MIN) / (RANDOMIZE_DISTANCE_MAX - RANDOMIZE_DISTANCE_MIN)));
-  const rhythm = Math.max(-1, Math.min(1, rightRotation / Math.PI));
+  const param1 = Math.max(-1, Math.min(1, leftRotation / Math.PI));
+  const param2 = Math.max(0, Math.min(1, (handDistance - RANDOMIZE_DISTANCE_MIN) / (RANDOMIZE_DISTANCE_MAX - RANDOMIZE_DISTANCE_MIN)));
+  const param3 = Math.max(-1, Math.min(1, rightRotation / Math.PI));
 
-  return { pitch, filter, rhythm };
+  return {
+    bass: { pitch: param1, filter: param2, resonance: param3 },
+    synth: { detune: param1, filter: param2, lfoRate: param3 },
+    drum: { decay: param1, velocity: param2, noiseFilter: param3 }
+  };
 }
 
 export function recognizeGesture(results, prevState) {

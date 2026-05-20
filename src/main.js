@@ -4,6 +4,18 @@ import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
 import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
 
+const PARAM_LABELS = {
+  bass: ['Pitch', 'Filter', 'Resonance'],
+  synth: ['Detune', 'Filter', 'LFO Rate'],
+  drum: ['Decay', 'Velocity', 'Noise Filter']
+};
+
+const PARAM_KEYS = {
+  bass: ['pitch', 'filter', 'resonance'],
+  synth: ['detune', 'filter', 'lfoRate'],
+  drum: ['decay', 'velocity', 'noiseFilter']
+};
+
 const GESTURE_LABELS = {
   [GESTURES.SELECT_BASS]: 'Select Bass',
   [GESTURES.SELECT_SYNTH]: 'Select Synth',
@@ -118,8 +130,12 @@ function handleGestureDetected(result) {
       if (params) {
         appState.randomizeMode = true;
         appState.parameters = params;
-        updateParameterDisplay(params);
-        console.log('[Randomize] pitch:', params.pitch.toFixed(2), 'filter:', params.filter.toFixed(2), 'rhythm:', params.rhythm.toFixed(2));
+        updateParameterDisplay();
+        const el = appState.selectedElement;
+        if (el) {
+          const p = params[el];
+          console.log('[Randomize]', el, Object.entries(p).map(([k, v]) => `${k}: ${v.toFixed(2)}`).join(', '));
+        }
       }
       break;
     default:
@@ -185,14 +201,21 @@ function updateGestureFeedback(gesture) {
   }
 }
 
-function updateParameterDisplay(params) {
+function updateParameterDisplay() {
   const displayEl = document.getElementById('parameter-display');
-  if (displayEl) {
-    displayEl.classList.remove('hidden');
-    document.getElementById('pitch-value').textContent = params.pitch.toFixed(2);
-    document.getElementById('filter-value').textContent = params.filter.toFixed(2);
-    document.getElementById('rhythm-value').textContent = params.rhythm.toFixed(2);
-  }
+  if (!displayEl) return;
+
+  const el = appState.selectedElement;
+  if (!el) return;
+
+  displayEl.classList.remove('hidden');
+  const params = appState.parameters[el];
+  const labels = PARAM_LABELS[el];
+  const keys = PARAM_KEYS[el];
+
+  displayEl.innerHTML = keys.map((key, i) =>
+    `<div>${labels[i]}: <span id="${key}-value">${params[key].toFixed(2)}</span></div>`
+  ).join('');
 }
 
 function hideParameterDisplay() {

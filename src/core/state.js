@@ -10,9 +10,9 @@ export const appState = {
   },
   randomizeMode: false,
   parameters: {
-    pitch: 0,
-    filter: 0,
-    rhythm: 0
+    bass: { pitch: 0, filter: 0, resonance: 0 },
+    synth: { detune: 0, filter: 0, lfoRate: 0 },
+    drum: { decay: 0, velocity: 0, noiseFilter: 0 }
   },
   handAngles: {
     left: null,
