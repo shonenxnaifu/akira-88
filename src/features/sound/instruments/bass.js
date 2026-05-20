@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 import { getMasterVolume } from '../engine.js';
 
-const BASS_NOTES = [65.41, 82.41, 98.00];
+const BASS_NOTES = [65.41, 73.42, 82.41, 87.31, 98.00, 110.00, 123.47, 130.81];
 
 let synth = null;
 let filter = null;
@@ -14,33 +14,41 @@ export function createBass() {
   filter = new Tone.Filter(500, 'lowpass');
   filter.Q.value = 5;
 
+  const distortion = new Tone.Distortion(0.4);
+
+  const delay = new Tone.FeedbackDelay('8n', 0.25);
+  delay.wet.value = 0.2;
+
   volume = new Tone.Volume(0);
 
   synth = new Tone.MembraneSynth({
-    pitchDecay: 0.03,
-    octaves: 5,
-    oscillator: { type: 'fatsine' },
+    pitchDecay: 0.05,
+    octaves: 6,
+    oscillator: { type: 'square' },
     envelope: {
-      attack: 3,
-      decay: 0.3,
-      sustain: 0.7,
-      release: 3,
-      attackCurve: 'bounce'
+      attack: 0.001,
+      decay: 0.2,
+      sustain: 0.0,
+      release: 0.8,
+      attackCurve: 'linear',
+      decayCurve: 'linear'
     }
-  }).connect(filter);
+  }).connect(distortion);
 
-  filter.connect(volume);
+  distortion.connect(filter);
+  filter.connect(delay);
+  delay.connect(volume);
   volume.connect(getMasterVolume());
 
   isCreated = true;
-  console.log('Bass instrument created');
+  console.log('Bass instrument created (hard techno + delay)');
 }
 
 export function updateBassParams(params) {
   if (!synth || !filter) return;
 
-  const noteIndex = Math.round(((params.pitch + 1) / 2) * 2);
-  const clampedIndex = Math.max(0, Math.min(2, noteIndex));
+  const noteIndex = Math.round(((params.pitch + 1) / 2) * 7);
+  const clampedIndex = Math.max(0, Math.min(7, noteIndex));
   synth.frequency.value = BASS_NOTES[clampedIndex];
 
   const freq = 200 + params.filter * (800 - 200);
