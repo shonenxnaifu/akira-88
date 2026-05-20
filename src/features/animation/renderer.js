@@ -4,10 +4,14 @@ let app = null;
 let videoTexture = null;
 let videoSprite = null;
 let videoElement = null;
-let landmarkGraphics = null;
+let glowOuter = null;
+let glowMid = null;
+let glowCore = null;
 
-const LINE_COLOR = 0xDB69D2;
-const DOT_COLOR = 0x000000;
+const HAND_COLORS = {
+  Left: 0x00E5FF,
+  Right: 0xFF6B35
+};
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -30,8 +34,16 @@ export function initAnimation(videoEl) {
 
   document.getElementById('animation-container').appendChild(app.view);
 
-  landmarkGraphics = new PIXI.Graphics();
-  app.stage.addChild(landmarkGraphics);
+  glowOuter = new PIXI.Graphics();
+  glowMid = new PIXI.Graphics();
+  glowCore = new PIXI.Graphics();
+
+  glowOuter.blendMode = PIXI.BLEND_MODES.ADD;
+  glowMid.blendMode = PIXI.BLEND_MODES.ADD;
+
+  app.stage.addChild(glowOuter);
+  app.stage.addChild(glowMid);
+  app.stage.addChild(glowCore);
 
   videoElement.addEventListener('loadeddata', () => {
     console.log('Video loaded, dimensions:', videoElement.videoWidth, 'x', videoElement.videoHeight);
@@ -89,10 +101,41 @@ function landmarkToScreen(landmark) {
   return { x, y };
 }
 
-export function drawHandLandmarks(landmarksList, handednessList) {
-  if (!landmarkGraphics) return;
+function drawLines(graphics, points, color, width, alpha) {
+  for (const [i, j] of HAND_CONNECTIONS) {
+    const p1 = points[i];
+    const p2 = points[j];
+    if (!p1 || !p2) continue;
 
-  landmarkGraphics.clear();
+    graphics.lineStyle(width, color, alpha);
+    graphics.moveTo(p1.x, p1.y);
+    graphics.lineTo(p2.x, p2.y);
+  }
+}
+
+function drawDots(graphics, points, color, radius, alpha) {
+  for (const point of points) {
+    if (!point) continue;
+    graphics.beginFill(color, alpha);
+    graphics.drawCircle(point.x, point.y, radius);
+    graphics.endFill();
+  }
+}
+
+function drawWrist(graphics, points, color, radius, alpha) {
+  const wrist = points[0];
+  if (!wrist) return;
+  graphics.beginFill(color, alpha);
+  graphics.drawCircle(wrist.x, wrist.y, radius);
+  graphics.endFill();
+}
+
+export function drawHandLandmarks(landmarksList, handednessList) {
+  if (!glowOuter || !glowMid || !glowCore) return;
+
+  glowOuter.clear();
+  glowMid.clear();
+  glowCore.clear();
 
   if (!landmarksList || landmarksList.length === 0) return;
 
@@ -100,39 +143,27 @@ export function drawHandLandmarks(landmarksList, handednessList) {
     const handInfo = handednessList?.[handIndex];
     const rawLabel = handInfo ? handInfo.label : 'Unknown';
     const handLabel = rawLabel === 'Left' ? 'Right' : 'Left';
-    const color = handLabel === 'Left' ? 0x00E5FF : 0xFF6B35;
+    const color = HAND_COLORS[handLabel];
     const screenPoints = landmarks.map((lm) => landmarkToScreen(lm));
 
-    for (const [i, j] of HAND_CONNECTIONS) {
-      const p1 = screenPoints[i];
-      const p2 = screenPoints[j];
-      if (!p1 || !p2) continue;
+    drawLines(glowOuter, screenPoints, color, 8, 0.3);
+    drawLines(glowMid, screenPoints, color, 4, 0.5);
+    drawLines(glowCore, screenPoints, color, 1.5, 1.0);
 
-      landmarkGraphics.lineStyle(2, LINE_COLOR, 0.8);
-      landmarkGraphics.moveTo(p1.x, p1.y);
-      landmarkGraphics.lineTo(p2.x, p2.y);
-    }
+    drawDots(glowOuter, screenPoints, color, 8, 0.2);
+    drawDots(glowMid, screenPoints, color, 5, 0.5);
+    drawDots(glowCore, screenPoints, color, 2, 1.0);
 
-    for (const point of screenPoints) {
-      if (!point) continue;
-      landmarkGraphics.beginFill(DOT_COLOR, 0.9);
-      landmarkGraphics.drawCircle(point.x, point.y, 4);
-      landmarkGraphics.endFill();
-    }
-
-    const wrist = screenPoints[0];
-    if (wrist) {
-      landmarkGraphics.beginFill(DOT_COLOR, 1);
-      landmarkGraphics.drawCircle(wrist.x, wrist.y, 6);
-      landmarkGraphics.endFill();
-    }
+    drawWrist(glowOuter, screenPoints, color, 10, 0.2);
+    drawWrist(glowMid, screenPoints, color, 6, 0.5);
+    drawWrist(glowCore, screenPoints, color, 3, 1.0);
   });
 }
 
 export function clearHandLandmarks() {
-  if (landmarkGraphics) {
-    landmarkGraphics.clear();
-  }
+  if (glowOuter) glowOuter.clear();
+  if (glowMid) glowMid.clear();
+  if (glowCore) glowCore.clear();
 }
 
 export function getApp() {
