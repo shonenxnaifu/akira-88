@@ -19,6 +19,29 @@
       <input type="number" id="bpm-input" value="120" min="60" max="220">
     </div>
 
+    <div id="volume-control">
+      <div class="volume-row">
+        <label>Master</label>
+        <input type="range" id="volume-master" min="0" max="100" value="100" class="volume-slider">
+        <span id="volume-master-value" class="volume-value">100</span>
+      </div>
+      <div class="volume-row">
+        <label>Bass</label>
+        <input type="range" id="volume-bass" min="0" max="100" value="100" class="volume-slider">
+        <span id="volume-bass-value" class="volume-value">100</span>
+      </div>
+      <div class="volume-row">
+        <label>Synth</label>
+        <input type="range" id="volume-synth" min="0" max="100" value="100" class="volume-slider">
+        <span id="volume-synth-value" class="volume-value">100</span>
+      </div>
+      <div class="volume-row">
+        <label>Drum</label>
+        <input type="range" id="volume-drum" min="0" max="100" value="100" class="volume-slider">
+        <span id="volume-drum-value" class="volume-value">100</span>
+      </div>
+    </div>
+
     <div id="element-status">
       <div class="element" id="bass-status">Bass: <span class="status">OFF</span></div>
       <div class="element" id="synth-status">Synth: <span class="status">OFF</span></div>

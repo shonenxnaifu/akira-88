@@ -61,25 +61,6 @@ export function detectMuteToggle(hand, handedness) {
   return null;
 }
 
-export function detectVolumeRotation(hand, handedness, prevAngle) {
-  if (handedness !== 'Left') return null;
-
-  if (prevAngle === null || prevAngle === undefined) return null;
-
-  const currentAngle = calculateHandRotation(hand);
-  const diff = currentAngle - prevAngle;
-
-  if (diff > ROTATION_THRESHOLD) {
-    return 'volume_up';
-  }
-
-  if (diff < -ROTATION_THRESHOLD) {
-    return 'volume_down';
-  }
-
-  return null;
-}
-
 export function detectRandomizeMode(leftHand, rightHand) {
   if (!leftHand || !rightHand) return false;
 
@@ -147,10 +128,6 @@ export function recognizeGesture(results, prevState) {
   if (leftHand) {
     const playStop = detectPlayStop(leftHand, 'Left');
     if (playStop) return { gesture: playStop, params: null };
-
-    const prevLeftAngle = prevState.handAngles?.left ?? null;
-    const volume = detectVolumeRotation(leftHand, 'Left', prevLeftAngle);
-    if (volume) return { gesture: volume, params: null };
   }
 
   return { gesture: 'none', params: null };

@@ -68,8 +68,6 @@
 
 **`detectMuteToggle(hand, handedness)`** - Right hand, fist (0 fingers) → `mute_toggle`
 
-**`detectVolumeRotation(hand, handedness, prevAngle)`** - Left hand rotation direction. Compares current angle with previous angle. Threshold: 0.3 radians. Returns `volume_up` or `volume_down`.
-
 **`detectRandomizeMode(leftHand, rightHand)`** - Both hands open (≥4 fingers each) → activates randomize mode.
 
 **`calculateRandomizeParams(leftHand, rightHand)`** - Continuous parameters:
@@ -80,7 +78,7 @@
 **`recognizeGesture(results, prevState)`** - Main entry point. Priority order:
 1. Randomize mode (if element selected + playing)
 2. Right hand: element selection → mute toggle
-3. Left hand: play/stop → volume rotation
+3. Left hand: play/stop
 
 ---
 
@@ -108,8 +106,11 @@
 - `select_bass/synth/drum` → `selectElement()`
 - `play_stop` → `togglePlayStop()`
 - `mute_toggle` → `toggleMute()`
-- `volume_up/down` → `adjustVolume()`
 - `randomize_mode` → update parameters, show display
+
+**`handleMasterVolume(e)`** - Updates `appState.masterVolume` from slider (0-100 → 0-1).
+
+**`handleElementVolume(e)`** - Updates individual element volume from slider.
 
 **`selectElement(element)`** - Sets selected element, marks active, updates UI.
 
@@ -130,7 +131,7 @@
 ## 7. State & Constants
 
 ### Constants (core/constants.js)
-- `GESTURE_CONFIG`: `{ DEBOUNCE_MS: 500, ROTATION_THRESHOLD: 0.3, RANDOMIZE_DISTANCE_MIN: 0.1, RANDOMIZE_DISTANCE_MAX: 0.6 }`
+- `GESTURE_CONFIG`: `{ DEBOUNCE_MS: 500, RANDOMIZE_DISTANCE_MIN: 0.1, RANDOMIZE_DISTANCE_MAX: 0.6 }`
 
 ### State Tracking (index.js)
 - `prevState`: `{ selectedElement, isPlaying, handAngles: { left, right } }`
@@ -169,9 +170,13 @@
 - [x] Right hand index + middle + ring → Select Drum
 - [x] Left hand thumb only → Play/Stop toggle
 - [x] Right hand fist → Mute Toggle
-- [ ] Left hand rotation → Volume up/down
 - [ ] Both hands crystal ball → Randomize Mode
 - [ ] Parameter display shows values in randomize mode
+
+### 9.3.1 Volume Control (Manual UI)
+- [ ] Master volume slider updates all elements
+- [ ] Individual element sliders (Bass, Synth, Drum) work independently
+- [ ] Slider values display correctly (0-100)
 
 ### 9.4 Edge Cases
 - [x] No hands → "No gesture detected"
@@ -190,6 +195,7 @@
 - [x] Play/Stop gesture working (left hand thumb)
 - [x] Mute toggle gesture working (right hand fist)
 - [x] Hand rotation and distance calculations accurate
+- [x] Volume control via UI sliders (master + per-element)
 - [ ] Randomize mode with continuous parameters (pending testing)
 - [x] Gesture feedback UI updating in real-time
 - [ ] Parameter display showing values during randomize (pending testing)
@@ -236,7 +242,6 @@
 - [x] Implement `detectElementSelection()` - bass (1 finger), synth (2 fingers), drum (3 fingers)
 - [x] Implement `detectPlayStop()` - left hand thumb only
 - [x] Implement `detectMuteToggle()` - right hand fist
-- [x] Implement `detectVolumeRotation()` - left hand rotation direction
 - [x] Implement `detectRandomizeMode()` - crystal ball pose
 - [x] Implement `calculateRandomizeParams()` - pitch, filter, rhythm
 - [x] Implement `recognizeGesture()` - main entry with priority logic
@@ -252,6 +257,8 @@
 - [x] Add state tracking for previous angles
 - [x] Fix UI panel z-index for visibility
 - [x] Fix handedness swap for mirrored camera
+- [x] Add master + per-element volume sliders to UI
+- [x] Remove volume gesture, replace with manual slider control
 
 ### Testing
 - [x] Test webcam starts correctly
@@ -260,6 +267,7 @@
 - [x] Test element selection gestures (bass, synth, drum)
 - [x] Test play/stop gesture
 - [x] Test mute toggle gesture
+- [x] Test volume sliders (master + per-element)
 - [ ] Test randomize mode continuous parameters
 - [ ] Test gesture priority (randomize > others)
 - [x] Test debounce behavior
@@ -297,9 +305,12 @@
 
 ### Removed
 - **Thumb dependency** from element selection gestures (now uses `countFourFingers()`)
+- **Volume gesture** (`detectVolumeRotation`, `volume_up`, `volume_down`) - replaced with manual UI sliders
+- **`ROTATION_THRESHOLD`** constant - no longer needed without volume gesture
+- **`adjustVolume()`** function - replaced with `handleMasterVolume()` and `handleElementVolume()`
 
 ### Pending Testing
-- Volume up/down via left hand rotation
 - Randomize mode with continuous parameter control
 - Randomize mode priority over other gestures
 - Parameter display during randomize mode
+- Volume sliders (master + per-element) UI interaction

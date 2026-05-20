@@ -16,15 +16,12 @@ export const GESTURES = {
   SELECT_DRUM: 'select_drum',
   PLAY_STOP: 'play_stop',
   MUTE_TOGGLE: 'mute_toggle',
-  VOLUME_UP: 'volume_up',
-  VOLUME_DOWN: 'volume_down',
   RANDOMIZE_MODE: 'randomize_mode',
   NONE: 'none'
 };
 
 export const GESTURE_CONFIG = {
   DEBOUNCE_MS: 500,
-  ROTATION_THRESHOLD: 0.3,
   RANDOMIZE_DISTANCE_MIN: 0.1,
   RANDOMIZE_DISTANCE_MAX: 0.6
 };

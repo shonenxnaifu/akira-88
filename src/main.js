@@ -5,14 +5,12 @@ import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, g
 import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
 
 const GESTURE_LABELS = {
-  [GESTURES.SELECT_BASS]: '🎸 Select Bass',
-  [GESTURES.SELECT_SYNTH]: '🎹 Select Synth',
-  [GESTURES.SELECT_DRUM]: '🥁 Select Drum',
-  [GESTURES.PLAY_STOP]: '⏯ Play/Stop',
-  [GESTURES.MUTE_TOGGLE]: '🔇 Mute Toggle',
-  [GESTURES.VOLUME_UP]: '🔊 Volume Up',
-  [GESTURES.VOLUME_DOWN]: '🔉 Volume Down',
-  [GESTURES.RANDOMIZE_MODE]: '✨ Randomize Mode',
+  [GESTURES.SELECT_BASS]: 'Select Bass',
+  [GESTURES.SELECT_SYNTH]: 'Select Synth',
+  [GESTURES.SELECT_DRUM]: 'Select Drum',
+  [GESTURES.PLAY_STOP]: 'Play/Stop',
+  [GESTURES.MUTE_TOGGLE]: 'Mute Toggle',
+  [GESTURES.RANDOMIZE_MODE]: 'Randomize Mode',
   [GESTURES.NONE]: 'No gesture detected'
 };
 
@@ -29,6 +27,26 @@ function setupEventListeners() {
 
   playBtn.addEventListener('click', handlePlayClick);
   bpmInput.addEventListener('change', handleBPMChange);
+
+  document.getElementById('volume-master').addEventListener('input', handleMasterVolume);
+  document.getElementById('volume-bass').addEventListener('input', handleElementVolume);
+  document.getElementById('volume-synth').addEventListener('input', handleElementVolume);
+  document.getElementById('volume-drum').addEventListener('input', handleElementVolume);
+}
+
+function handleMasterVolume(e) {
+  const value = parseInt(e.target.value);
+  appState.masterVolume = value / 100;
+  document.getElementById('volume-master-value').textContent = value;
+  console.log('Master volume:', appState.masterVolume.toFixed(2));
+}
+
+function handleElementVolume(e) {
+  const el = e.target.id.replace('volume-', '');
+  const value = parseInt(e.target.value);
+  appState.elements[el].volume = value / 100;
+  document.getElementById(`volume-${el}-value`).textContent = value;
+  console.log(`${el} volume:`, appState.elements[el].volume.toFixed(2));
 }
 
 function handlePlayClick() {
@@ -96,28 +114,27 @@ function handleGestureDetected(result) {
     case GESTURES.MUTE_TOGGLE:
       toggleMute();
       break;
-    case GESTURES.VOLUME_UP:
-      adjustVolume(0.1);
-      break;
-    case GESTURES.VOLUME_DOWN:
-      adjustVolume(-0.1);
-      break;
     case GESTURES.RANDOMIZE_MODE:
       if (params) {
         appState.randomizeMode = true;
         appState.parameters = params;
         updateParameterDisplay(params);
+        console.log('[Randomize] pitch:', params.pitch.toFixed(2), 'filter:', params.filter.toFixed(2), 'rhythm:', params.rhythm.toFixed(2));
       }
       break;
     default:
-      appState.randomizeMode = false;
-      hideParameterDisplay();
+      if (appState.randomizeMode) {
+        appState.randomizeMode = false;
+        hideParameterDisplay();
+        console.log('[Randomize] Exited randomize mode');
+      }
       break;
   }
 
   updatePrevState({
     selectedElement: appState.selectedElement,
-    isPlaying: appState.isPlaying
+    isPlaying: appState.isPlaying,
+    handAngles: { ...appState.handAngles }
   });
 }
 
@@ -141,15 +158,6 @@ function toggleMute() {
     appState.elements[appState.selectedElement].muted = !appState.elements[appState.selectedElement].muted;
     updateElementStatus();
     console.log(`Mute toggle for ${appState.selectedElement}:`, appState.elements[appState.selectedElement].muted);
-  }
-}
-
-function adjustVolume(delta) {
-  if (appState.selectedElement) {
-    const el = appState.elements[appState.selectedElement];
-    el.volume = clamp(el.volume + delta, 0, 1);
-    updateElementStatus();
-    console.log(`Volume for ${appState.selectedElement}:`, el.volume.toFixed(2));
   }
 }
 
@@ -218,6 +226,9 @@ function startHandDetectionLoop() {
       const fingerCount = countExtendedFingers(lm);
       const centroid = getHandCentroid(lm);
       const rotation = calculateHandRotation(lm);
+
+      if (handLabel === 'Left') appState.handAngles.left = rotation;
+      else if (handLabel === 'Right') appState.handAngles.right = rotation;
 
       console.log(`  Hand ${i} [${handLabel}, ${score}% confidence]:`);
       console.log(`    Fingers extended: ${fingerCount}/5`);

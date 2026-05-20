@@ -30,8 +30,26 @@ export function initGesture(videoElement, callbacks) {
 
     const recognitionResult = recognizeGesture(results, prevState);
 
+    if (currentLandmarks.length === 2) {
+      let leftHand = null;
+      let rightHand = null;
+      const handednessList = results.multiHandedness.map((h) => h.label === 'Left' ? 'Right' : 'Left');
+      for (let i = 0; i < currentLandmarks.length; i++) {
+        if (handednessList[i] === 'Left') leftHand = currentLandmarks[i];
+        else if (handednessList[i] === 'Right') rightHand = currentLandmarks[i];
+      }
+      if (leftHand) prevState.handAngles.left = calculateHandRotation(leftHand);
+      if (rightHand) prevState.handAngles.right = calculateHandRotation(rightHand);
+    } else if (currentLandmarks.length === 1) {
+      const rawLabel = currentHandedness[0]?.label;
+      const actualLabel = rawLabel === 'Left' ? 'Right' : 'Left';
+      const angle = calculateHandRotation(currentLandmarks[0]);
+      if (actualLabel === 'Left') prevState.handAngles.left = angle;
+      else prevState.handAngles.right = angle;
+    }
+
     const now = Date.now();
-    const isDebounced = recognitionResult.gesture !== 'none' && recognitionResult.gesture === lastGestureType && (now - lastGestureTime) < GESTURE_DEBOUNCE_MS;
+    const isDebounced = recognitionResult.gesture !== 'none' && recognitionResult.gesture !== 'randomize_mode' && recognitionResult.gesture === lastGestureType && (now - lastGestureTime) < GESTURE_DEBOUNCE_MS;
 
     console.log('[index.js] gesture:', recognitionResult.gesture, 'isDebounced:', isDebounced, 'hasCallback:', !!(callbacks && callbacks.onGesture));
 
