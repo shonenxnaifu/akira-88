@@ -1,7 +1,8 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [82.41, 87.31, 92.5, 98.0, 103.83, 110.0, 116.54, 123.47];
+const BASS_NOTES = [69.30, 73.42, 82.41, 87.31, 98.0, 110.0, 123.47, 130.81];
+//                  C#2    D2     E2     F2     G2    A2     B2     C3
 
 let synth = null;
 let filter = null;
@@ -11,35 +12,35 @@ let isCreated = false;
 export function createBass() {
   if (isCreated) return;
 
-  filter = new Tone.Filter(150, "lowpass");
-  filter.Q.value = 12;
+  filter = new Tone.Filter(500, "lowpass");
+  filter.Q.value = 22;
+  const distortion = new Tone.Distortion(0.4);
+  const chebyshev = new Tone.Chebyshev(3);
+  const delay = new Tone.FeedbackDelay("8n", 0.7);
+  delay.wet.value = 0.7;
+  const reverb = new Tone.Reverb({
+    decay: 3.0,
+    wet: 0.5,
+    preDelay: 0.01,
+  });
 
-  const distortion = new Tone.Distortion(0.9);
-  const bitcrusher = new Tone.BitCrusher(3);
-  const chebyshev = new Tone.Chebyshev(10);
-  const delay = new Tone.FeedbackDelay("4n", 0.3);
-  delay.wet.value = 0.3;
-  const reverb = new Tone.Reverb({ decay: 2.0, wet: 0.3, preDelay: 0.01 });
-
-  volume = new Tone.Volume(12);
+  volume = new Tone.Volume(8);
 
   synth = new Tone.MembraneSynth({
-    pitchDecay: 0.005,
-    octaves: 10,
+    pitchDecay: 0.02,
+    octaves: 5,
     oscillator: { type: "sawtooth" },
     envelope: {
-      attack: 0.001,
-      decay: 0.15,
-      sustain: 0.6,
-      release: 0.3,
+      attack: 0.005,
+      decay: 0.4,
+      sustain: 0.9,
+      release: 0.6,
       attackCurve: "linear",
     },
   }).connect(chebyshev);
 
-  // Signal chain
   chebyshev.connect(distortion);
-  distortion.connect(bitcrusher);
-  bitcrusher.connect(filter);
+  distortion.connect(filter);
   filter.connect(delay);
   delay.connect(reverb);
   reverb.connect(volume);
@@ -56,10 +57,10 @@ export function updateBassParams(params) {
   const clampedIndex = Math.max(0, Math.min(7, noteIndex));
   synth.frequency.value = BASS_NOTES[clampedIndex];
 
-  const freq = 150 + params.filter * (600 - 150);
+  const freq = 500 + params.filter * (1000 - 500);
   filter.frequency.value = freq;
 
-  const q = ((params.resonance + 1) / 2) * 12;
+  const q = ((params.resonance + 1) / 2) * 22;
   filter.Q.value = q;
 }
 

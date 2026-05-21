@@ -1,7 +1,8 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [82.41, 87.31, 92.5, 98.0, 103.83, 110.0, 116.54, 123.47];
+const BASS_NOTES = [32.70, 36.71, 41.20, 49.00, 55.00, 61.74, 65.41, 73.42];
+//                  C1     D1     E1     G1     A1     B1     C2     D2
 
 let synth = null;
 let filter = null;

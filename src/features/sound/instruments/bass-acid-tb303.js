@@ -1,7 +1,11 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [82.41, 87.31, 92.5, 98.0, 103.83, 110.0, 116.54, 123.47];
+// DEFAULT 
+// const BASS_NOTES = [82.41, 87.31, 92.5, 98.0, 103.83, 110.0, 116.54, 123.47];
+
+// ACID TECHNO TB-303
+const BASS_NOTES = [92.50, 98.0, 103.83, 110.0, 123.47, 130.81, 146.83, 164.81];
 
 let synth = null;
 let filter = null;
@@ -18,9 +22,7 @@ export function createBass() {
   // highpass = new Tone.Filter(65, "highpass");
 
   const distortion = new Tone.Distortion(0.5);
-
   const chebyshev = new Tone.Chebyshev(4);
-
   const delay = new Tone.FeedbackDelay("8n", 0.5);
   delay.wet.value = 0.5;
 
