@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import { getBassSynth } from "./instruments/bass-acid-psychedelic.js";
+import { getBassSynth } from "./instruments/bass-hard-industrial.js";
 import { warn } from "tone/build/esm/core/util/Debug.js";
 
 // DEFAULT
@@ -17,10 +17,10 @@ import { warn } from "tone/build/esm/core/util/Debug.js";
 // const BASS_PATTERN = ["F2", null, "F2", "D2", "F2", null, "C3", "F2"];
 
 // ACID TECHNO - PSYCHEDELIC
-const BASS_PATTERN = ["E2", null, null, "G2", "E2", null, "D2", null];
+// const BASS_PATTERN = ["E2", null, null, "G2", "E2", null, "D2", null];
 
 // HARD - INDSUTRIAL
-// const BASS_PATTERN = ["D1", null, "D1", null, "D1", null, "D1", "D1"];
+const BASS_PATTERN = ["D1", null, "D1", null, "D1", null, "D1", "D1"];
 
 // HARD - SUBTERROR
 // const BASS_PATTERN = ['C1', null, 'C1', null, 'C1', null, 'C1', null];

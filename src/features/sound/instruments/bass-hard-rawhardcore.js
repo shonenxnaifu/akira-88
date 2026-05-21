@@ -1,20 +1,22 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [73.42, 82.41, 92.50, 98.0, 110.0, 123.47, 130.81, 146.83];
+const BASS_NOTES = [73.42, 82.41, 92.5, 98.0, 110.0, 123.47, 130.81, 146.83];
 //                  D2     E2     F#2    G2    A2     B2     C3     D3
 
 let synth = null;
 let filter = null;
 let volume = null;
 let isCreated = false;
+let highpass = null;
 
 export function createBass() {
   if (isCreated) return;
 
+  highpass = new Tone.Filter(65, "highpass");
+
   filter = new Tone.Filter(150, "lowpass");
   filter.Q.value = 12;
-
   const distortion = new Tone.Distortion(0.9);
   const bitcrusher = new Tone.BitCrusher(3);
   const chebyshev = new Tone.Chebyshev(10);
@@ -41,7 +43,8 @@ export function createBass() {
   chebyshev.connect(distortion);
   distortion.connect(bitcrusher);
   bitcrusher.connect(filter);
-  filter.connect(delay);
+  filter.connect(highpass);
+  highpass.connect(delay);
   delay.connect(reverb);
   reverb.connect(volume);
   volume.connect(getMasterVolume());
