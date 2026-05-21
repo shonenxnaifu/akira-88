@@ -42,60 +42,10 @@ export function createSequencers() {
   }, BASS_PATTERN, '16n');
 
   // ACID TECHNO TB-303
-  /* bassSeq = new Tone.Sequence(
-    (time, note) => {
-      if (note) {
-        getBassSynth().triggerAttackRelease(note, "8n", time);
-      }
-    },
-    BASS_PATTERN,
-    "8n",
-  ); */
-
   // ACID TECHNO - DARK ACID
-  /* bassSeq = new Tone.Sequence(
-    (time, note) => {
-      if (note) {
-        getBassSynth().triggerAttackRelease(note, "8n", time);
-      }
-    },
-    BASS_PATTERN,
-    "8n",
-  ); */
-
   // ACID TECHNO - PSYCHEDELIC
-  /* bassSeq = new Tone.Sequence(
-    (time, note) => {
-      if (note) {
-        getBassSynth().triggerAttackRelease(note, "8n", time);
-      }
-    },
-    BASS_PATTERN,
-    "8n",
-  ); */
-
   // HARD - INDSUTRIAL
-  /* bassSeq = new Tone.Sequence(
-    (time, note) => {
-      if (note) {
-        getBassSynth().triggerAttackRelease(note, "8n", time);
-      }
-    },
-    BASS_PATTERN,
-    "8n",
-  ); */
-
   // HARD - SUBTERROR
-  /* bassSeq = new Tone.Sequence(
-    (time, note) => {
-      if (note) {
-        getBassSynth().triggerAttackRelease(note, "8n", time);
-      }
-    },
-    BASS_PATTERN,
-    "8n",
-  ); */
-
   // HARD - RAW HARDCORE
   /* bassSeq = new Tone.Sequence(
     (time, note) => {
