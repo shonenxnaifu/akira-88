@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import { getBassSynth } from './instruments/bass-hard-industrial';
+import { getBassSynth } from './instruments/bass.js';
 import { warn } from 'tone/build/esm/core/util/Debug.js';
 
 const BASS_PATTERN = [

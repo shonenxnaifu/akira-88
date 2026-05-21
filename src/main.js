@@ -37,7 +37,8 @@ function setupEventListeners() {
   const playBtn = document.getElementById('play-btn');
   const bpmInput = document.getElementById('bpm-input');
 
-  playBtn.addEventListener('click', handlePlayClick);
+  // playBtn.addEventListener('click', handlePlayClick);
+  handlePlayClick()
   bpmInput.addEventListener('change', handleBPMChange);
 
   document.getElementById('volume-master').addEventListener('input', handleMasterVolume);
