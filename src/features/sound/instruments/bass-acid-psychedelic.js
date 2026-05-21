@@ -8,16 +8,19 @@ let synth = null;
 let filter = null;
 let volume = null;
 let isCreated = false;
+let highpass = null;
 
 export function createBass() {
   if (isCreated) return;
 
+  highpass = new Tone.Filter(65, "highpass");
+  
   filter = new Tone.Filter(500, "lowpass");
   filter.Q.value = 22;
-  const distortion = new Tone.Distortion(0.4);
-  const chebyshev = new Tone.Chebyshev(3);
+  const distortion = new Tone.Distortion(0.7);
+  const chebyshev = new Tone.Chebyshev(2);
   const delay = new Tone.FeedbackDelay("8n", 0.7);
-  delay.wet.value = 0.7;
+  delay.wet.value = 0.4;
   const reverb = new Tone.Reverb({
     decay: 3.0,
     wet: 0.5,
@@ -41,7 +44,8 @@ export function createBass() {
 
   chebyshev.connect(distortion);
   distortion.connect(filter);
-  filter.connect(delay);
+  filter.connect(highpass);
+  highpass.connect(delay)
   delay.connect(reverb);
   reverb.connect(volume);
   volume.connect(getMasterVolume());

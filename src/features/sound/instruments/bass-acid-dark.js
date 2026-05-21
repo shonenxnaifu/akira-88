@@ -1,5 +1,6 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
+import { warn } from "tone/build/esm/core/util/Debug.js";
 
 const BASS_NOTES = [73.42, 82.41, 87.31, 92.50, 98.0, 110.0, 123.47, 130.81];
 //                  D2     E2     F2     F#2    G2    A2     B2     C3
@@ -8,22 +9,25 @@ let synth = null;
 let filter = null;
 let volume = null;
 let isCreated = false;
+let highpass = null;
 
 export function createBass() {
   if (isCreated) return;
 
+  highpass = new Tone.Filter(100, "highpass");
+
   filter = new Tone.Filter(300, "lowpass");
   filter.Q.value = 18;
 
-  const distortion = new Tone.Distortion(0.7);
+  const distortion = new Tone.Distortion(0.1);
 
-  const chebyshev = new Tone.Chebyshev(6);
+  const chebyshev = new Tone.Chebyshev(13);
 
-  const delay = new Tone.FeedbackDelay("4n", 0.6);
-  delay.wet.value = 0.5;
+  const delay = new Tone.FeedbackDelay("7n", 0.4);
+  delay.wet.value = 0.2;
 
   const reverb = new Tone.Reverb({
-    decay: 2.0,
+    decay: 2.0,   
     wet: 0.3,
     preDelay: 0.01,
   });
@@ -45,7 +49,8 @@ export function createBass() {
 
   chebyshev.connect(distortion);
   distortion.connect(filter);
-  filter.connect(delay);
+  filter.connect(highpass);
+  highpass.connect(delay)
   delay.connect(reverb);
   reverb.connect(volume);
   volume.connect(getMasterVolume());

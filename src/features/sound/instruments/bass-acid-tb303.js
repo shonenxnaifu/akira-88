@@ -11,7 +11,7 @@ let synth = null;
 let filter = null;
 let volume = null;
 let isCreated = false;
-// let highpass = null;
+let highpass = null;
 
 export function createBass() {
   if (isCreated) return;
@@ -19,7 +19,7 @@ export function createBass() {
   filter = new Tone.Filter(400, "lowpass");
   filter.Q.value = 20;
   
-  // highpass = new Tone.Filter(65, "highpass");
+  highpass = new Tone.Filter(65, "highpass");
 
   const distortion = new Tone.Distortion(0.5);
   const chebyshev = new Tone.Chebyshev(4);
@@ -48,12 +48,11 @@ export function createBass() {
   }).connect(chebyshev);
 
   chebyshev.connect(distortion);
-  // distortion.connect(highpass);
-  // highpass.connect(filter);
   distortion.connect(filter);
-  filter.connect(delay);
-  delay.connect(reverb);
-  reverb.connect(volume);
+  filter.connect(highpass);
+  highpass.connect(reverb);
+  reverb.connect(delay);
+  delay.connect(volume);
   volume.connect(getMasterVolume());
 
   isCreated = true;
