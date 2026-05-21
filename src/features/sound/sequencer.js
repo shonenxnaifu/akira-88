@@ -1,7 +1,16 @@
 import * as Tone from 'tone';
 import { getBassSynth } from './instruments/bass.js';
+import { warn } from 'tone/build/esm/core/util/Debug.js';
 
-const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', null];
+// const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', null];
+// const BASS_PATTERN = ['C2', null, null, null, 'D1', null, null, null];
+const BASS_PATTERN = [
+  null, 'G2', 'G2', 'G2',
+  null, 'A2', 'G2', 'G2',
+  null, 'F#2', 'G2', 'G2',
+  null, 'G2', 'F#3', 'G2'
+]
+//const BASS_PATTERN = ['D1', null, 'D1', 'D1', 'F1', null, 'D1', 'G1'];
 
 let bassSeq = null;
 let isStarted = false;
@@ -11,9 +20,9 @@ export function createSequencers() {
 
   bassSeq = new Tone.Sequence((time, note) => {
     if (note) {
-      getBassSynth().triggerAttackRelease(note, '8n', time);
+      getBassSynth().triggerAttackRelease(note, '16n', time);
     }
-  }, BASS_PATTERN, '8n');
+  }, BASS_PATTERN, '16n');
 
   isStarted = true;
   console.log('Sequencers created');
