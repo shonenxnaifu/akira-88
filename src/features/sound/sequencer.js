@@ -6,7 +6,7 @@ import { triggerDrum } from "./instruments/drum.js";
 /* START ACID PSYCHEDELIC  */
 
 // FIT WITH 16n
-const BASS_PATTERN = ['F2', null, 'F2', 'D2', 'F2', null, 'C3', 'F2'];
+// const BASS_PATTERN = ['F2', null, 'F2', 'D2', 'F2', null, 'C3', 'F2'];
 
 // FIT WITH 16n
 // const BASS_PATTERN = ['A2', null, 'A2', null, 'A2', null, 'A2', 'B2'];
@@ -15,7 +15,7 @@ const BASS_PATTERN = ['F2', null, 'F2', 'D2', 'F2', null, 'C3', 'F2'];
 // const BASS_PATTERN = ['E2', null, null, 'G2', 'E2', null, 'D2', null];
 
 // FIT WITH 8n/16n
-// const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', 'D1'];
+const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', 'D1'];
 
 // FIT WITH 16n 
 // const BASS_PATTERN = ['F#2', 'F#2', null, 'F#2', 'D2', null, 'F#2', 'A2'];
