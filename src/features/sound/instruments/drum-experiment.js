@@ -1,6 +1,9 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
+// 909 Dark Techno Drum Kit
+// Based on Aulart tutorial: Create a 909 Dark Techno Pattern
+
 let mainKick = null;
 let rumbleKick = null;
 let closedHat1 = null;
