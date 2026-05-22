@@ -4,54 +4,72 @@ import { getMasterVolume } from '../engine.js';
 let synth = null;
 let filter = null;
 let lfo = null;
+let chorus = null;
+let reverb = null;
 let volume = null;
 let isCreated = false;
 
 export function createSynth() {
   if (isCreated) return;
 
-  filter = new Tone.Filter(2000, 'lowpass');
+  // Synthwave filter - lower cutoff for darker sound
+  filter = new Tone.Filter(1500, 'lowpass');
 
-  lfo = new Tone.LFO(2, 500, 5000);
+  // Slow LFO for filter sweep effect (classic synthwave)
+  lfo = new Tone.LFO(0.5, 300, 3000);
   lfo.start();
   lfo.connect(filter.frequency);
 
-  volume = new Tone.Volume(0);
+  // Chorus for wide, lush synthwave sound
+  chorus = new Tone.Chorus(4, 2.5, 0.5);
+  chorus.start();
 
+  // Reverb for atmospheric depth
+  reverb = new Tone.Reverb({
+    decay: 3,
+    preDelay: 0.1,
+    wet: 0.3
+  });
+
+  volume = new Tone.Volume(-8);
+
+  // Synthwave oscillator: supersaw with detuning
   synth = new Tone.PolySynth(Tone.Synth, {
     maxPolyphony: 8,
     oscillator: {
-      type: 'fatsawtooth',
-      count: 3,
-      spread: 20
+      type: 'fmsquare',
+      count: 4,
+      spread: 30
     },
     envelope: {
-      attack: 0.05,
-      decay: 0.3,
-      sustain: 0.4,
-      release: 1.0
+      attack: 0.1,
+      decay: 0.5,
+      sustain: 0.6,
+      release: 2.0
     }
   }).connect(filter);
 
-  filter.connect(volume);
+  filter.connect(chorus);
+  chorus.connect(reverb);
+  reverb.connect(volume);
   volume.connect(getMasterVolume());
 
   isCreated = true;
-  console.log('Synth instrument created');
+  console.log('Synth instrument created (synthwave style)');
 }
 
 export function updateSynthParams(params) {
   if (!synth || !filter || !lfo) return;
 
-  const detune = params.detune * 20;
+  const detune = params.detune * 30;
   synth.set({ detune });
 
-  const freq = 500 + params.filter * (5000 - 500);
+  const freq = 300 + ((params.filter + 1) / 2) * (4000 - 300);
   filter.frequency.value = freq;
-  lfo.min = freq - 500;
-  lfo.max = freq + 500;
+  lfo.min = freq - 400;
+  lfo.max = freq + 400;
 
-  const rate = 0.1 + ((params.lfoRate + 1) / 2) * (10 - 0.1);
+  const rate = 0.1 + ((params.lfoRate + 1) / 2) * (5 - 0.1);
   lfo.frequency.value = rate;
 }
 

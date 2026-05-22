@@ -5,22 +5,22 @@ import { triggerDrum } from "./instruments/drum.js";
 
 /* START ACID PSYCHEDELIC  */
 
-// FIT WITH 16n
+// 1 FIT WITH 16n
 // const BASS_PATTERN = ['F2', null, 'F2', 'D2', 'F2', null, 'C3', 'F2'];
 
-// FIT WITH 16n
+// 2 FIT WITH 16n
 // const BASS_PATTERN = ['A2', null, 'A2', null, 'A2', null, 'A2', 'B2'];
 
-// FIT WITH 16n
+// 3 FIT WITH 16n
 // const BASS_PATTERN = ['E2', null, null, 'G2', 'E2', null, 'D2', null];
 
-// FIT WITH 8n/16n
+// 4 FIT WITH 8n/16n
 const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', 'D1'];
 
-// FIT WITH 16n 
+// 5 FIT WITH 16n 
 // const BASS_PATTERN = ['F#2', 'F#2', null, 'F#2', 'D2', null, 'F#2', 'A2'];
 
-// FIT WITH 8n/16n
+// 6 FIT WITH 8n/16n
 // const BASS_PATTERN = ['C1', null, 'C1', null, 'C1', null, 'C1', null];
 
 /* END ACID PSYCHEDELIC  */
@@ -29,15 +29,37 @@ const BASS_PATTERN = ['D1', null, 'D1', null, 'D1', null, 'D1', 'D1'];
 // RAW HARDCORE --> not fit
 // SUB TERROR --> not fit
 
+// Synthwave style: Arpeggiated chords with sustained pads
+// const SYNTH_PATTERN = [
+//   ["C3", "E3", "G3", "B3"],  // Cmaj7 chord
+//   null,
+//   ["A2", "C3", "E3", "G3"],  // Am7 chord
+//   null,
+//   ["F2", "A2", "C3", "E3"],  // Fmaj7 chord
+//   null,
+//   ["G2", "B2", "D3", "F3"],  // G7 chord
+//   null,
+// ];
 const SYNTH_PATTERN = [
-  ["C3", "E3", "G3"],
-  null,
-  ["C3", "E3"],
-  null,
-  ["E3", "G3"],
-  null,
-  ["C3", "G3"],
-  null,
+  null, null, null, null,
+  null, null, null, null,
+  null, null, null, null,
+  null, null, null, null,
+  
+  null, null, "A2", null,
+  null, null, null, null,
+  "F2", "A2", "D2", null,
+  "E2", "C2", "C#2", null,
+  
+  null, null, null, null,
+  null, null, null, null,
+  null, null, null, null,
+  null, null, null, null,
+
+  null, null, "E3", null,
+  null, null, null, null,
+  null, null, null, null,
+  "C2", "A2", "C2", "A2",
 ];
 
 
@@ -140,7 +162,7 @@ export function createSequencers() {
   synthSeq = new Tone.Sequence(
     (time, chord) => {
       if (chord) {
-        getSynth().triggerAttackRelease(chord, "16n", time, 0.7);
+        getSynth().triggerAttackRelease(chord, "8n", time, 0.7);
       }
     },
     SYNTH_PATTERN,
@@ -217,7 +239,7 @@ export function startSequencers() {
   if (!isStarted) return;
 
   bassSeq.start(0);
-  // synthSeq.start(0);
+  synthSeq.start(0);
   
   drumKickSeq.start(0);
   drumRumbleSeq.start(0);
