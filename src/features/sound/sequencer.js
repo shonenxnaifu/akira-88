@@ -1,6 +1,7 @@
 import * as Tone from "tone";
 import { getBassSynth } from "./instruments/bass-hard-industrial.js";
 import { getSynth } from "./instruments/synth.js";
+import { triggerDrum } from "./instruments/drum.js";
 
 const BASS_PATTERN = ["D1", null, "D1", null, "D1", null, "D1", "D1"];
 
@@ -15,8 +16,13 @@ const SYNTH_PATTERN = [
   null,
 ];
 
+const DRUM_KICK_PATTERN = [1, 0, 1, 0, 1, 0, 1, 0];
+const DRUM_HIHAT_PATTERN = [0, 1, 0, 1, 0, 1, 0, 1];
+
 let bassSeq = null;
 let synthSeq = null;
+let drumKickSeq = null;
+let drumHihatSeq = null;
 let isStarted = false;
 
 export function createSequencers() {
@@ -42,6 +48,26 @@ export function createSequencers() {
     "8n",
   );
 
+  drumKickSeq = new Tone.Sequence(
+    (time, hit) => {
+      if (hit) {
+        triggerDrum('kick', time, 0.8);
+      }
+    },
+    DRUM_KICK_PATTERN,
+    "8n",
+  );
+
+  drumHihatSeq = new Tone.Sequence(
+    (time, hit) => {
+      if (hit) {
+        triggerDrum('hihat', time, 0.6);
+      }
+    },
+    DRUM_HIHAT_PATTERN,
+    "8n",
+  );
+
   isStarted = true;
   console.log("Sequencers created");
 }
@@ -51,7 +77,9 @@ export function startSequencers() {
 
   bassSeq.start(0);
   synthSeq.start(0);
-  console.log("Bass and synth sequencers started");
+  drumKickSeq.start(0);
+  drumHihatSeq.start(0);
+  console.log("All sequencers started");
 }
 
 export function stopSequencers() {
@@ -59,7 +87,9 @@ export function stopSequencers() {
 
   bassSeq.stop();
   synthSeq.stop();
-  console.log("Bass and synth sequencers stopped");
+  drumKickSeq.stop();
+  drumHihatSeq.stop();
+  console.log("All sequencers stopped");
 }
 
 export function isSequencersStarted() {

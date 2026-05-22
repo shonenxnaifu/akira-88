@@ -3,7 +3,7 @@ import { BPM_MIN, BPM_MAX, GESTURES } from './core/constants.js';
 import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
 import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
-import { initAudio, startTransport, stopTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, stopSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated } from './features/sound/index.js';
+import { initAudio, startTransport, stopTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, stopSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated, createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './features/sound/index.js';
 
 const PARAM_LABELS = {
   bass: ['Pitch', 'Filter', 'Resonance'],
@@ -67,6 +67,7 @@ function handleElementVolume(e) {
 
   if (el === 'bass') setBassVolume(appState.elements.bass.volume);
   else if (el === 'synth') setSynthVolume(appState.elements.synth.volume);
+  else if (el === 'drum') setDrumVolume(appState.elements.drum.volume);
 
   console.log(`${el} volume:`, appState.elements[el].volume.toFixed(2));
 }
@@ -76,9 +77,10 @@ async function handlePlayClick() {
     await initAudio();
     createBass();
     createSynth();
+    createDrum();
     createSequencers();
     appState.audioInitialized = true;
-    console.log('Audio initialized, bass and synth instruments created');
+    console.log('Audio initialized, all instruments created');
   }
 
   appState.isPlaying = !appState.isPlaying;
@@ -194,6 +196,7 @@ function toggleMute() {
 
     if (appState.selectedElement === 'bass') setBassMute(appState.elements.bass.muted);
     else if (appState.selectedElement === 'synth') setSynthMute(appState.elements.synth.muted);
+    else if (appState.selectedElement === 'drum') setDrumMute(appState.elements.drum.muted);
 
     console.log(`Mute toggle for ${appState.selectedElement}:`, appState.elements[appState.selectedElement].muted);
   }
@@ -298,6 +301,8 @@ function startParameterLoop() {
         updateBassParams(appState.parameters.bass);
       } else if (el === 'synth') {
         updateSynthParams(appState.parameters.synth);
+      } else if (el === 'drum') {
+        updateDrumParams(appState.parameters.drum);
       }
     }
 

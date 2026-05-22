@@ -5,7 +5,7 @@
 - **Duration**: 6-8 hours
 - **Goal**: Implement Tone.js sound engine with Bass, Synth, and Drum instruments, BPM-synced sequencing, parameter control, and volume/mute integration
 - **Prerequisites**: Phase 2 completed (gesture detection, state management, UI sliders)
-- **Status**: In Progress (Setup, Master Engine, Bass Instrument completed; Synth, Drum, full parameter loop pending)
+- **Status**: In Progress (Setup, Master Engine, Bass, Synth, Drum instruments completed; edge case testing pending)
 
 ---
 
@@ -195,7 +195,7 @@ SOUND_CONFIG: {
 ### 2. BPM & Transport
 - [x] Transport starts on Play, stops on Stop
 - [x] BPM input changes tempo in real-time
-- [ ] All instruments stay in sync at different BPMs (bass only, synth/drum pending)
+- [x] All instruments stay in sync at different BPMs (bass, synth, drum)
 
 ### 3. Bass Instrument
 - [x] Bass plays looping pattern when active
@@ -210,23 +210,23 @@ SOUND_CONFIG: {
 - [x] LFO Rate parameter modulates movement speed
 
 ### 5. Drum Instrument
-- [ ] Drum plays kick + hi-hat pattern when active
-- [ ] Decay parameter changes sustain length
-- [ ] Velocity parameter changes hit intensity
-- [ ] Noise Filter parameter changes hi-hat brightness
+- [x] Drum plays kick + hi-hat pattern when active
+- [x] Decay parameter changes sustain length
+- [x] Velocity parameter changes hit intensity
+- [x] Noise Filter parameter changes hi-hat brightness
 
 ### 6. Volume & Mute
-- [x] Master slider affects all instruments (bass, synth connected)
-- [x] Per-element sliders affect individual instruments (bass, synth connected)
-- [x] Mute toggle silences selected element (bass, synth connected)
+- [x] Master slider affects all instruments (bass, synth, drum connected)
+- [x] Per-element sliders affect individual instruments (bass, synth, drum connected)
+- [x] Mute toggle silences selected element (bass, synth, drum connected)
 - [x] Volume/mute changes are immediate (no lag)
 
 ### 7. Randomize Mode Parameters
-- [x] Enter randomize mode → parameters update in real-time (bass, synth)
-- [x] Left hand rotation changes Param 1 (pitch for bass, detune for synth)
-- [ ] Hand distance changes Param 2 (filter for bass, synth)
-- [ ] Right hand rotation changes Param 3 (resonance for bass, lfoRate for synth)
-- [ ] Parameter changes are smooth (no clicking/popping)
+- [x] Enter randomize mode → parameters update in real-time (bass, synth, drum)
+- [x] Left hand rotation changes Param 1 (pitch for bass, detune for synth, decay for drum)
+- [x] Hand distance changes Param 2 (filter for bass/synth, velocity for drum)
+- [x] Right hand rotation changes Param 3 (resonance for bass, lfoRate for synth, noiseFilter for drum)
+- [x] Parameter changes are smooth (no clicking/popping)
 
 ### 8. Edge Cases
 - [ ] No element selected → no sound plays
@@ -243,7 +243,7 @@ SOUND_CONFIG: {
 - [x] Create `src/features/sound/engine.js` - master audio engine
 - [x] Create `src/features/sound/instruments/bass.js`
 - [x] Create `src/features/sound/instruments/synth.js`
-- [ ] Create `src/features/sound/instruments/drum.js`
+- [x] Create `src/features/sound/instruments/drum.js`
 - [x] Create `src/features/sound/sequencer.js`
 - [x] Create `src/features/sound/index.js` - public API
 
@@ -267,10 +267,10 @@ SOUND_CONFIG: {
 - [x] Test synth sound in isolation
 
 ### Drum Instrument
-- [ ] Create MembraneSynth (kick) + NoiseSynth (hi-hat) chain
-- [ ] Implement `updateDrumParams()` with decay/velocity/noiseFilter mapping
-- [ ] Implement `setDrumVolume()` and `setDrumMute()`
-- [ ] Test drum sound in isolation
+- [x] Create MembraneSynth (kick) + NoiseSynth (hi-hat) chain
+- [x] Implement `updateDrumParams()` with decay/velocity/noiseFilter mapping
+- [x] Implement `setDrumVolume()` and `setDrumMute()`
+- [x] Test drum sound in isolation
 
 ### Sequencer
 - [x] Create 8-step pattern for bass
@@ -279,15 +279,15 @@ SOUND_CONFIG: {
 - [x] Test pattern loops correctly
 - [x] Create 8-step patterns for synth
 - [x] Implement `Tone.Sequence` for synth
-- [ ] Create 8-step patterns for drum
-- [ ] Implement `Tone.Sequence` for drum
+- [x] Create 8-step patterns for drum
+- [x] Implement `Tone.Sequence` for drum
 
 ### Parameter Application
 - [x] Implement `applyBassParams()` for randomize mode
 - [x] Implement `applySynthParams()` for randomize mode
-- [ ] Implement `applyDrumParams()`
+- [x] Implement `applyDrumParams()` for randomize mode
 - [x] Create `requestAnimationFrame` loop in main.js
-- [ ] Test real-time parameter updates for all instruments
+- [x] Test real-time parameter updates for all instruments
 
 ### Integration
 - [x] Update `main.js` play button to init audio
@@ -302,9 +302,10 @@ SOUND_CONFIG: {
 - [x] Test BPM changes sync bass instrument
 - [x] Test bass instrument in isolation
 - [x] Test synth instrument in isolation
-- [ ] Test all instruments playing simultaneously
-- [x] Test volume/mute for bass and synth instruments
-- [ ] Test randomize mode parameter updates
+- [x] Test drum instrument in isolation
+- [x] Test all instruments playing simultaneously
+- [x] Test volume/mute for all instruments
+- [x] Test randomize mode parameter updates
 - [ ] Test edge cases (no element, rapid changes, stop/start)
 
 ---
@@ -317,7 +318,8 @@ SOUND_CONFIG: {
 - `src/features/sound/engine.js` - Tone.js initialization, Transport control, BPM, master volume
 - `src/features/sound/instruments/bass.js` - Monrella-style industrial bass with Distortion(0.7), BitCrusher(4-bit), Filter(250Hz), FeedbackDelay(4n, 45% wet)
 - `src/features/sound/instruments/synth.js` - PolySynth with fatsawtooth oscillators, Filter + LFO modulation chain
-- `src/features/sound/sequencer.js` - 8-step bass and synth sequencers synced to Tone.Transport
+- `src/features/sound/instruments/drum.js` - MembraneSynth (kick) + NoiseSynth (hi-hat) with highpass filter chain
+- `src/features/sound/sequencer.js` - 8-step bass, synth, and drum sequencers synced to Tone.Transport
 - `src/features/sound/index.js` - Public API exports
 - `SOUND_CONFIG` constants in `core/constants.js` with all parameter ranges
 - `audioInitialized` flag in `core/state.js`
@@ -328,15 +330,12 @@ SOUND_CONFIG: {
 - Bass oscillator changed from sine → sawtooth for aggressive harmonics
 - Bass envelope tightened: decay 0.1s, release 0.3s, no sustain
 - Bass filter lowered from 500Hz → 250Hz for sub-bass weight
-- Play button now initializes audio context, creates bass + synth + sequencers, starts Transport
+- Play button now initializes audio context, creates bass + synth + drum + sequencers, starts Transport
 - BPM input calls `setBPM()` in real-time
-- Volume/mute sliders call Tone.js setters for bass and synth
-- Parameter loop applies bass and synth params during randomize mode
+- Volume/mute sliders call Tone.js setters for bass, synth, and drum
+- Parameter loop applies bass, synth, and drum params during randomize mode
 
 **Pending**
-- Drum instrument (MembraneSynth + NoiseSynth)
-- Drum sequencer pattern
-- Full parameter application for drum in randomize mode
 - Edge case testing
 
 ### v0.0.1 (Initial)
