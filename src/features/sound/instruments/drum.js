@@ -6,6 +6,10 @@ let noise = null;
 let noiseFilter = null;
 let kickVolume = null;
 let noiseVolume = null;
+let kickDistortion = null;
+let kickSaturation = null;
+let kickHighpass = null;
+let kickGain = null;
 let isCreated = false;
 
 export function createDrum() {
@@ -13,29 +17,39 @@ export function createDrum() {
 
   noiseFilter = new Tone.Filter(4000, 'highpass');
 
-  kickVolume = new Tone.Volume(0);
+  kickVolume = new Tone.Volume(3);
   noiseVolume = new Tone.Volume(0);
 
+  kickDistortion = new Tone.Distortion(0.2);
+  kickSaturation = new Tone.Chebyshev(3);
+  kickHighpass = new Tone.Filter(20, 'highpass');
+  kickGain = new Tone.Gain(2);
+
   kick = new Tone.MembraneSynth({
-    pitchDecay: 0.02,
-    octaves: 8,
+    pitchDecay: 0.05,
+    octaves: 6,
     oscillator: { type: 'sine' },
     envelope: {
       attack: 0.001,
-      decay: 0.3,
+      decay: 0.2,
       sustain: 0,
-      release: 0.1,
-      attackCurve: 'linear'
+      release: 0.4,
+      attackCurve: 'exponential'
     }
-  }).connect(kickVolume);
+  }).connect(kickSaturation);
+
+  kickSaturation.connect(kickDistortion);
+  kickDistortion.connect(kickHighpass);
+  kickHighpass.connect(kickGain);
+  kickGain.connect(kickVolume);
 
   noise = new Tone.NoiseSynth({
     noise: { type: 'white' },
     envelope: {
       attack: 0.001,
-      decay: 0.3,
+      decay: 0.08,
       sustain: 0,
-      release: 0.1,
+      release: 0.05,
       attackCurve: 'linear'
     }
   }).connect(noiseFilter);
@@ -46,29 +60,40 @@ export function createDrum() {
   noiseVolume.connect(getMasterVolume());
 
   isCreated = true;
-  console.log('Drum instrument created');
+  console.log('Drum instrument created (hard industrial kick)');
 }
 
 export function updateDrumParams(params) {
   if (!kick || !noise || !noiseFilter) return;
 
-  const decay = 0.1 + ((params.decay + 1) / 2) * (1.0 - 0.1);
+  const decay = 0.08 + ((params.decay + 1) / 2) * (0.4 - 0.08);
   kick.envelope.decay = decay;
-  noise.envelope.decay = decay;
+  noise.envelope.decay = decay * 0.5;
 
-  const freq = 1000 + ((params.noiseFilter + 1) / 2) * (8000 - 1000);
+  const distAmount = 0.2 + ((params.distortion + 1) / 2) * (0.8 - 0.2);
+  kickDistortion.distortion = distAmount;
+  kickSaturation.value = 3 + ((params.distortion + 1) / 2) * (10 - 3);
+
+  const freq = 2000 + ((params.noiseFilter + 1) / 2) * (10000 - 2000);
   noiseFilter.frequency.value = freq;
+
+  const hpFreq = 20 + ((params.highpass + 1) / 2) * (80 - 20);
+  kickHighpass.frequency.value = hpFreq;
 }
 
 export function triggerDrum(type, time, velocity = 0.8) {
-  if (!kick || !noise) return;
+  if (!kick || !noise) {
+    console.warn('Drum not initialized!');
+    return;
+  }
 
   const vel = Math.max(0.5, Math.min(1.0, velocity));
 
   if (type === 'kick') {
-    kick.triggerAttackRelease('C1', '8n', time, vel);
+    console.log('KICK TRIGGERED at', time, 'velocity:', vel);
+    kick.triggerAttackRelease('C2', '16n', time, vel);
   } else if (type === 'hihat') {
-    noise.triggerAttackRelease('16n', time, vel);
+    noise.triggerAttackRelease('32n', time, vel);
   }
 }
 

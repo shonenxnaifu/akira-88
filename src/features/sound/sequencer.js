@@ -16,8 +16,10 @@ const SYNTH_PATTERN = [
   null,
 ];
 
+// Ryuji Takeuchi style: Four-on-the-floor with rolling 16th note energy
 const DRUM_KICK_PATTERN = [1, 0, 1, 0, 1, 0, 1, 0];
-const DRUM_HIHAT_PATTERN = [0, 1, 0, 1, 0, 1, 0, 1];
+// Off-beat open hi-hats with 16th note variations
+const DRUM_HIHAT_PATTERN = [0, 1, 1, 1, 0, 1, 1, 1];
 
 let bassSeq = null;
 let synthSeq = null;
@@ -51,7 +53,9 @@ export function createSequencers() {
   drumKickSeq = new Tone.Sequence(
     (time, hit) => {
       if (hit) {
-        triggerDrum('kick', time, 0.8);
+        // Vary velocity for more human feel
+        const vel = 0.7 + Math.random() * 0.2;
+        triggerDrum('kick', time, vel);
       }
     },
     DRUM_KICK_PATTERN,
@@ -61,7 +65,8 @@ export function createSequencers() {
   drumHihatSeq = new Tone.Sequence(
     (time, hit) => {
       if (hit) {
-        triggerDrum('hihat', time, 0.6);
+        // Off-beat hats slightly quieter
+        triggerDrum('hihat', time, 0.5);
       }
     },
     DRUM_HIHAT_PATTERN,
@@ -75,8 +80,8 @@ export function createSequencers() {
 export function startSequencers() {
   if (!isStarted) return;
 
-  bassSeq.start(0);
-  synthSeq.start(0);
+  // bassSeq.start(0);
+  // synthSeq.start(0);
   drumKickSeq.start(0);
   drumHihatSeq.start(0);
   console.log("All sequencers started");
