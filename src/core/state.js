@@ -4,6 +4,7 @@ export const appState = {
   bpm: 120,
   masterVolume: 1.0,
   audioInitialized: false,
+  editState: false,
   elements: {
     bass: { active: false, volume: 1.0, muted: false },
     synth: { active: false, volume: 1.0, muted: false },

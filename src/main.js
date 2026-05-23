@@ -23,6 +23,7 @@ const GESTURE_LABELS = {
   [GESTURES.SELECT_DRUM]: 'Select Drum',
   [GESTURES.MUTE_TOGGLE]: 'Mute Toggle',
   [GESTURES.RANDOMIZE_MODE]: 'Randomize Mode',
+  [GESTURES.EXIT_EDIT]: 'Exit Edit Mode',
   [GESTURES.NONE]: 'No gesture detected'
 };
 
@@ -122,6 +123,7 @@ function startWebcam() {
       startHandDetectionLoop();
     },
     onGesture: handleGestureDetected,
+    onGestureProgress: handleGestureProgress,
     onError: (err) => {
       console.error('❌ Webcam error:', err);
     }
@@ -129,10 +131,19 @@ function startWebcam() {
 }
 
 function handleGestureDetected(result) {
-  const { gesture, params } = result;
+  const { gesture, params, editState } = result;
 
   console.log('[handleGestureDetected] Received gesture:', gesture);
+
+  const feedbackEl = document.getElementById('gesture-feedback');
+  if (feedbackEl) {
+    feedbackEl.classList.remove('hold-active');
+  }
   updateGestureFeedback(gesture);
+
+  if (editState !== undefined) {
+    appState.editState = editState;
+  }
 
   switch (gesture) {
     case GESTURES.SELECT_BASS:
@@ -146,6 +157,10 @@ function handleGestureDetected(result) {
     case GESTURES.SELECT_DRUM:
       console.log('[handleGestureDetected] Selecting drum');
       selectElement('drum');
+      break;
+    case GESTURES.EXIT_EDIT:
+      console.log('[handleGestureDetected] Exiting edit state');
+      updateElementStatus();
       break;
     case GESTURES.MUTE_TOGGLE:
       toggleMute();
@@ -174,15 +189,17 @@ function handleGestureDetected(result) {
   updatePrevState({
     selectedElement: appState.selectedElement,
     isPlaying: appState.isPlaying,
-    handAngles: { ...appState.handAngles }
+    handAngles: { ...appState.handAngles },
+    editState: appState.editState
   });
 }
 
 function selectElement(element) {
   appState.selectedElement = element;
   appState.elements[element].active = true;
+  appState.editState = true;
   updateElementStatus();
-  console.log(`Selected element: ${element}`);
+  console.log(`Selected element: ${element}, entered edit state`);
 }
 
 function toggleMute() {
@@ -199,7 +216,7 @@ function toggleMute() {
 }
 
 function updateElementStatus() {
-  console.log('[updateElementStatus] Running, selectedElement:', appState.selectedElement);
+  console.log('[updateElementStatus] Running, selectedElement:', appState.selectedElement, 'editState:', appState.editState);
   const elements = ['bass', 'synth', 'drum'];
   elements.forEach((el) => {
     const statusEl = document.getElementById(`${el}-status`);
@@ -207,8 +224,9 @@ function updateElementStatus() {
     if (statusEl) {
       const state = appState.elements[el];
       const isSelected = appState.selectedElement === el;
+      const inEdit = appState.editState && isSelected;
       const statusText = state.active ? (state.muted ? 'MUTED' : 'ON') : 'OFF';
-      const label = isSelected ? `▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : `${el.charAt(0).toUpperCase() + el.slice(1)}`;
+      const label = inEdit ? `🔒 ▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : (isSelected ? `▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : `${el.charAt(0).toUpperCase() + el.slice(1)}`);
       statusEl.innerHTML = `${label}: <span class="status">${statusText}</span>`;
       console.log(`[updateElementStatus] ${el}: label="${label}", status="${statusText}"`);
     }
@@ -220,6 +238,23 @@ function updateGestureFeedback(gesture) {
   if (feedbackEl) {
     feedbackEl.textContent = GESTURE_LABELS[gesture] || GESTURE_LABELS[GESTURES.NONE];
   }
+}
+
+function handleGestureProgress(progress) {
+  const feedbackEl = document.getElementById('gesture-feedback');
+  if (!feedbackEl) return;
+
+  feedbackEl.classList.add('hold-active');
+
+  if (progress.blocked) {
+    const label = GESTURE_LABELS[progress.gesture] || progress.gesture;
+    feedbackEl.textContent = `🔒 ${label} blocked - exit edit first`;
+    return;
+  }
+
+  const label = GESTURE_LABELS[progress.gesture] || progress.gesture;
+  const seconds = (progress.elapsed / 1000).toFixed(1);
+  feedbackEl.textContent = `🔒 Holding ${label}... ${seconds}s / 3.0s`;
 }
 
 function updateParameterDisplay() {

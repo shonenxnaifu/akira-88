@@ -16,6 +16,7 @@ export const GESTURES = {
   SELECT_DRUM: 'select_drum',
   MUTE_TOGGLE: 'mute_toggle',
   RANDOMIZE_MODE: 'randomize_mode',
+  EXIT_EDIT: 'exit_edit',
   NONE: 'none'
 };
 

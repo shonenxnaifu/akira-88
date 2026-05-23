@@ -169,3 +169,8 @@
   font-size: 12px;
   color: var(--text-secondary);
 }
+
+#gesture-feedback.hold-active {
+  color: var(--accent-drum);
+  font-weight: bold;
+}
