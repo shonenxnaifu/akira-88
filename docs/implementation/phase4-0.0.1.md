@@ -113,9 +113,9 @@ PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 | `flowSpeed` | 0.5-3.0 | Stream movement speed |
 | `opacity` | 0.3-0.8 | Stream transparency |
 
-### 5. Effect: Particle Sparks (Drum - #FFD700) + Bloom
+### 5. Effect: Particle Sparks (Drum - #FFD700) + Bloom + Pulse
 
-**Visual:** Sharp, quick particle bursts. Warm gold color. Burst on drum hits, particles fly outward from between hands.
+**Visual:** Sharp, quick particle bursts. Warm gold color. Burst on drum hits, particles fly outward from between hands. Kick hits trigger enhanced pulse effect with expanding glow ring at particle edge.
 
 **Implementation:**
 - Use PixiJS ParticleContainer for performance (hundreds of particles)
@@ -123,10 +123,26 @@ PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 - Particles move outward from center point between hands
 - Gravity, friction, and lifetime per particle
 - Post-processing bloom filter for glow
+- **Kick pulse:** Expanding glow ring at outer edge of particle burst, velocity-scaled
 
-**`createSparkBurst(centerX, centerY, intensity)`** - Spawn 20-100 particles with random velocities.
+**`createSparkBurst(centerX, centerY, velocity, isKick)`** - Spawn particles with velocity-scaled properties. Kick hits add expanding glow ring.
 
-**`updateDrumEffect(delta)`** - Update particles: position, velocity, opacity decay, cleanup dead particles.
+**`updateDrumEffect(delta)`** - Update particles: position, velocity, opacity decay, cleanup dead particles. Update pulse ring radius/opacity.
+
+**Kick Pulse Effect (steps 0, 2, 4, 6 only):**
+- Triggered on kick hits, NOT hi-hat hits
+- Expanding warm gold (#FFD700) glow ring at outer edge of particle burst
+- Ring radius and opacity scaled by drum velocity
+- Ring fades at same rate as particles (600ms lifetime)
+
+**Velocity Mapping (Kick Hits):**
+| Velocity | Particle Count | Burst Force | Ring Radius | Ring Opacity |
+|----------|---------------|-------------|-------------|--------------|
+| 0.5 (low) | 30 | 5 | 40px | 0.3 |
+| 0.75 (med) | 50 | 7 | 60px | 0.5 |
+| 1.0 (high) | 80 | 10 | 80px | 0.7 |
+
+**Hi-hat Hits:** Normal particles only, no pulse ring.
 
 **Parameters:**
 | Param | Range | Effect |
@@ -136,6 +152,8 @@ PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 | `gravity` | 0-0.5 | Downward pull |
 | `friction` | 0.90-0.99 | Velocity decay |
 | `lifetime` | 300-1000ms | Particle fade-out time |
+| `pulseRingMaxRadius` | 40-80px | Max ring radius on kick hits |
+| `pulseRingOpacity` | 0.3-0.7 | Ring opacity on kick hits |
 
 ### 6. Audio-Animation Sync (`animation/sync.js`)
 
@@ -151,7 +169,7 @@ PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 **Intensity Mapping:**
 - Bass: Bolt brightness/thickness peaks on kick hits (steps 0 and 4)
 - Synth: Stream flow speed increases on snare/clap hits
-- Drum: Spark burst triggers on every drum hit
+- Drum: Kick hits trigger pulse ring (velocity-scaled), hi-hat hits trigger normal particles only
 
 ### 7. Hand Position Tracking (`animation/tracking.js`)
 
@@ -246,6 +264,8 @@ ANIMATION_CONFIG: {
   DRUM_GRAVITY: 0.3,
   DRUM_FRICTION: 0.95,
   DRUM_LIFETIME: 600,
+  DRUM_PULSE_RING_MAX_RADIUS: 60,
+  DRUM_PULSE_RING_OPACITY: 0.5,
   
   // Sync
   BEAT_SYNC_INTERVAL: '4n',  // Quarter note
@@ -291,10 +311,13 @@ ANIMATION_CONFIG: {
 ### 4. Particle Spark Effect (Drum)
 - [ ] Particles burst between hands on drum hits when drum + randomize mode active
 - [ ] Particle color is warm gold (#FFD700)
-- [ ] 30-80 particles spawn per hit
+- [ ] 30-80 particles spawn per hit (velocity-scaled)
 - [ ] Particles fly outward with gravity and friction
-- [ ] Particles fade out over lifetime
+- [ ] Particles fade out over lifetime (600ms)
 - [ ] Bloom/glow effect visible
+- [ ] Kick hits trigger pulse: expanding glow ring at particle edge
+- [ ] Pulse ring radius/opacity scales with drum velocity
+- [ ] Hi-hat hits: normal particles only, no pulse ring
 - [ ] Effect clears instantly when randomize mode exits
 
 ### 5. Audio Sync
@@ -355,18 +378,22 @@ ANIMATION_CONFIG: {
 - [ ] Add bloom/glow filter
 
 ### Particle Spark Effect (Drum)
-- [ ] Implement `createSparkBurst()` particle spawning
+- [ ] Implement `createSparkBurst()` particle spawning with velocity scaling
 - [ ] Use PixiJS ParticleContainer for performance
 - [ ] Implement particle physics (velocity, gravity, friction)
 - [ ] Add opacity/lifetime decay
 - [ ] Implement particle pooling (reuse Sprite objects)
 - [ ] Add bloom/glow filter
+- [ ] Implement kick pulse: expanding glow ring at particle edge
+- [ ] Map drum velocity to pulse ring radius/opacity
+- [ ] Differentiate kick vs hi-hat hits (pulse on kick only)
 
 ### Audio Sync
 - [ ] Implement `onBeat()` callback using Tone.Transport.scheduleRepeat()
 - [ ] Use Tone.Draw for frame-accurate updates
 - [ ] Map beat events to effect intensity spikes
 - [ ] Implement intensity decay between beats
+- [ ] Drum: kick hits trigger pulse ring, hi-hat hits trigger normal particles
 
 ### Hand Tracking Integration
 - [ ] Read hand positions from gesture system state
@@ -406,7 +433,7 @@ ANIMATION_CONFIG: {
 - `src/features/animation/manager.js` - effect show/hide/update lifecycle
 - `src/features/animation/effects/plasma.js` - bass plasma arcs (white core + orange glow)
 - `src/features/animation/effects/streams.js` - synth energy streams
-- `src/features/animation/effects/sparks.js` - drum particle sparks
+- `src/features/animation/effects/sparks.js` - drum particle sparks with kick pulse ring
 - `src/features/animation/sync.js` - Tone.Transport beat sync
 - `src/features/animation/tracking.js` - hand position tracking
 - `src/features/animation/index.js` - public API exports
@@ -423,9 +450,10 @@ ANIMATION_CONFIG: {
 - Canvas has `pointer-events: none` to not interfere with UI or gesture detection
 - Effects render between left/right hand positions (normalized → screen coords)
 - ParticleContainer used for sparks (hundreds of particles, GPU-accelerated)
-- Graphics used for plasma arcs and streams (bezier curves, dynamic paths)
+- Graphics used for plasma arcs, streams, and drum pulse ring (bezier curves, dynamic paths)
 - Tone.Draw schedules animation updates on exact audio clock
 - All effects use instant swap (no fade transitions)
 - Bloom/glow filters applied to all effects for visual impact
 - Bass plasma arcs: white core (#FFFFFF) with warm orange bloom (#FF6B35)
+- Drum pulse ring: warm gold (#FFD700) expanding ring on kick hits, velocity-scaled
 - Animation only active during randomize mode with both hands visible
