@@ -1,13 +1,13 @@
-import { initAudio, startTransport, stopTransport, setBPM, setMasterVolume, isAudioInitialized } from './engine.js';
+import { initAudio, startTransport, pauseTransport, setBPM, setMasterVolume, isAudioInitialized } from './engine.js';
 import { createBass, updateBassParams, setBassVolume, setBassMute, isBassCreated } from './instruments/bass-acid-psychedelic.js';
 import { createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated } from './instruments/synth.js';
 import { createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './instruments/drum.js';
-import { createSequencers, startSequencers, stopSequencers, isSequencersStarted } from './sequencer.js';
+import { createSequencers, startSequencers, pauseSequencers, isSequencersStarted } from './sequencer.js';
 
 export {
   initAudio,
   startTransport,
-  stopTransport,
+  pauseTransport,
   setBPM,
   setMasterVolume,
   isAudioInitialized,
@@ -28,6 +28,6 @@ export {
   isDrumCreated,
   createSequencers,
   startSequencers,
-  stopSequencers,
+  pauseSequencers,
   isSequencersStarted
 };

@@ -251,20 +251,8 @@ export function startSequencers() {
   console.log("All sequencers started");
 }
 
-export function stopSequencers() {
-  if (!isStarted) return;
-
-  bassSeq.stop();
-  synthSeq.stop();
-  
-  drumKickSeq.stop();
-  drumRumbleSeq.stop();
-  drumHihatSeq.stop();
-  drumHihat2Seq.stop();
-  drumOpenHatSeq.stop();
-  drumCrashSeq.stop();
-  
-  console.log("All sequencers stopped");
+export function pauseSequencers() {
+  console.log("Sequencers paused (via Transport)");
 }
 
 export function isSequencersStarted() {

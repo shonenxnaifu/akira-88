@@ -24,11 +24,11 @@ export function startTransport(bpm = 120) {
   console.log('Transport started at', bpm, 'BPM');
 }
 
-export function stopTransport() {
+export function pauseTransport() {
   if (!isInitialized) return;
 
-  Tone.Transport.stop();
-  console.log('Transport stopped');
+  Tone.Transport.pause();
+  console.log('Transport paused');
 }
 
 export function setBPM(bpm) {

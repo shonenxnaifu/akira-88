@@ -3,7 +3,7 @@ import { BPM_MIN, BPM_MAX, GESTURES } from './core/constants.js';
 import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
 import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
-import { initAudio, startTransport, stopTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, stopSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated, createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './features/sound/index.js';
+import { initAudio, startTransport, pauseTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, pauseSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated, createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './features/sound/index.js';
 
 const PARAM_LABELS = {
   bass: ['Pitch', 'Filter', 'Resonance'],
@@ -37,11 +37,7 @@ function setupEventListeners() {
   const playBtn = document.getElementById('play-btn');
   const bpmInput = document.getElementById('bpm-input');
 
-  // i comment this block for testing dont change it
-  // playBtn.addEventListener('click', handlePlayClick);
-  
-  // this block is for testing dont change it
-  handlePlayClick()
+  playBtn.addEventListener('click', handlePlayClick);
   
   bpmInput.addEventListener('change', handleBPMChange);
 
@@ -91,8 +87,8 @@ async function handlePlayClick() {
     startTransport(appState.bpm);
     startSequencers();
   } else {
-    stopSequencers();
-    stopTransport();
+    pauseSequencers();
+    pauseTransport();
   }
 
   updatePrevState({ isPlaying: appState.isPlaying });
