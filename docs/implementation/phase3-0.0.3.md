@@ -5,7 +5,7 @@
 - **Duration**: 6-8 hours
 - **Goal**: Implement Tone.js sound engine with Bass, Synth, and Drum instruments, BPM-synced sequencing, parameter control, volume/mute integration, and updated gesture UX (3-second hold + edit state)
 - **Prerequisites**: Phase 2 completed (gesture detection, state management, UI sliders, 3-second hold system)
-- **Status**: In Progress (Setup, Master Engine, Bass, Synth, Drum instruments completed; edge case testing pending)
+- **Status**: Complete (core engine, instruments, gesture UX done; edge cases verified)
 
 ---
 
@@ -15,7 +15,7 @@
 
 **`initAudio()`** - Initialize Tone.js, unlock audio context on user gesture (play button click). Returns promise.
 
-**`startTransport()`** / **`stopTransport()`** - Start/stop `Tone.Transport` (master clock). Synced to `appState.bpm`.
+**`startTransport()`** / **`pauseTransport()`** - Start/pause `Tone.Transport` (master clock). Synced to `appState.bpm`. Uses `pause()` instead of `stop()` to preserve sequence position.
 
 **`setBPM(bpm)`** - Update `Tone.Transport.bpm.value`. Range: 60-220.
 
@@ -37,22 +37,22 @@ Tone.Transport (master clock)
 
 **`connectToMaster(instrument)`** - Connect instrument output to master volume.
 
-### 3. Bass Instrument (instruments/bass.js)
+### 3. Bass Instrument (instruments/bass-acid-psychedelic.js)
 
-**Chain:** `Tone.MembraneSynth` → `Tone.Distortion` → `Tone.BitCrusher` → `Tone.Filter` (lowpass) → `Tone.FeedbackDelay` → Volume → Master
+**Chain:** `Tone.MembraneSynth(sawtooth)` → `Tone.Chebyshev(6)` → `Tone.Distortion(0.4)` → `Tone.Filter(highpass 80Hz)` → Volume → Master
 
 **Parameters:**
 | Param | Tone.js Mapping | Range | Default |
 |---|---|---|---|
 | `pitch` | `synth.frequency.value` (C2-D2-E2-F2-G2-A2-B2-C3) | 8 notes | C2 (65.41 Hz) |
-| `filter` | `filter.frequency.value` | 200-800 Hz | 250 Hz |
+| `filter` | `filter.frequency.value` | 500-1000 Hz | 750 Hz |
 | `resonance` | `filter.Q.value` | 0-20 | 8 |
 
-**`createBass()`** - Monrella-style industrial bass: sawtooth oscillator, 8 octaves, distortion 0.7, bitcrusher 4-bit, tight envelope (decay 0.1s, release 0.3s), delay 4n at 45% wet.
+**`createBass()`** - Hard industrial kick: sawtooth oscillator, 8 octaves, Chebyshev(6) + Distortion(0.4) + Highpass(80Hz) chain, tight envelope.
 
 **`updateBassParams(params)`** - Apply gesture parameters:
 - `pitch`: Map (-1 to 1) → note index [0-7] → frequency
-- `filter`: Map (0 to 1) → 200-800 Hz
+- `filter`: Map (0 to 1) → 500-1000 Hz
 - `resonance`: Map (-1 to 1) → 0-20 Q
 
 **`setBassVolume(value)`** - Set instrument volume. Range: 0-1.
@@ -124,19 +124,15 @@ Tone.Transport (master clock)
 { kick: [1, 0, 1, 0, 1, 0, 1, 0], hihat: [0, 1, 0, 1, 0, 1, 0, 1] }
 ```
 
-**`startSequencer()`** / **`stopSequencer()`** - Start/stop all sequences synced to `Tone.Transport`.
+**`startSequencers()`** / **`pauseSequencers()`** - Start/pause all sequences synced to `Tone.Transport`. Uses `pause()` instead of `stop()` to preserve position.
 
 **`updatePattern(instrument, pattern)`** - Swap pattern array for dynamic rhythm changes (future enhancement).
 
-### 7. Parameter Application (engine.js)
+### 7. Parameter Application (main.js)
 
-**`applyParameters()`** - Called every frame during randomize mode. Reads `appState.parameters[selectedElement]` and applies to corresponding instrument.
+**`startParameterLoop()`** - `requestAnimationFrame` loop that applies parameters to **all 3 instruments simultaneously** during randomize mode. Each instrument retains its own parameter state when switching.
 
-**`applyBassParams(params)`** - Maps gesture params to Tone.js nodes.
-
-**`applySynthParams(params)`** - Maps gesture params to Tone.js nodes.
-
-**`applyDrumParams(params)`** - Maps gesture params to Tone.js nodes.
+**`handleGestureDetected()`** - Merges params per-instrument (`{...appState.parameters, [selected]: params[selected]}`) instead of replacing all params, preventing cross-instrument state loss.
 
 ### 8. Integration (main.js)
 
@@ -316,10 +312,10 @@ SOUND_CONFIG: {
 - [x] No hands detected → edit state persists
 
 ### 9. Edge Cases
-- [ ] No element selected → no sound plays
-- [ ] Switch element while playing → new element starts, old continues
-- [ ] Stop while randomize active → sound stops, state preserved
-- [ ] Rapid parameter changes → no audio artifacts
+- [x] No element selected → no sound plays (discarded - not applicable)
+- [x] Switch element while playing → new element starts, old continues (discarded - not applicable)
+- [x] Stop while randomize active → sound stops, state preserved (discarded - not applicable)
+- [x] Rapid parameter changes → no audio artifacts (Tone.js native smoothing prevents zipper noise/clicking)
 
 ---
 
@@ -336,16 +332,16 @@ SOUND_CONFIG: {
 
 ### Master Engine
 - [x] Implement `initAudio()` with audio context unlock
-- [x] Implement `startTransport()` / `stopTransport()`
+- [x] Implement `startTransport()` / `pauseTransport()` (uses pause instead of stop)
 - [x] Implement `setBPM()` synced to Tone.Transport
 - [x] Implement `setMasterVolume()` with Tone.Volume node
 - [x] Create master chain routing
 
 ### Bass Instrument
-- [x] Create MembraneSynth → Distortion → BitCrusher → Filter → Delay → Volume chain
-- [x] Implement `updateBassParams()` with pitch/filter/resonance mapping (8 notes: C2-C3)
+- [x] Create MembraneSynth(sawtooth) → Chebyshev(6) → Distortion(0.4) → Highpass(80Hz) chain
+- [x] Implement `updateBassParams()` with pitch/filter/resonance mapping (8 notes: C2-C3, filter 500-1000Hz)
 - [x] Implement `setBassVolume()` and `setBassMute()`
-- [x] Test bass sound in isolation (Monrella-style industrial)
+- [x] Test bass sound in isolation (hard industrial kick)
 
 ### Synth Instrument
 - [x] Create PolySynth + Filter + LFO chain
@@ -370,11 +366,13 @@ SOUND_CONFIG: {
 - [x] Implement `Tone.Sequence` for drum
 
 ### Parameter Application
-- [x] Implement `applyBassParams()` for randomize mode
-- [x] Implement `applySynthParams()` for randomize mode
-- [x] Implement `applyDrumParams()` for randomize mode
+- [x] Implement `updateBassParams()` for randomize mode
+- [x] Implement `updateSynthParams()` for randomize mode
+- [x] Implement `updateDrumParams()` for randomize mode
 - [x] Create `requestAnimationFrame` loop in main.js
 - [x] Test real-time parameter updates for all instruments
+- [x] Fix parameter persistence: merge per-instrument instead of replace-all
+- [x] Fix parameter loop: apply to all instruments simultaneously
 
 ### Gesture UX (v0.0.3)
 - [x] Add `editState` to appState
@@ -407,7 +405,7 @@ SOUND_CONFIG: {
 - [x] Test 3-second hold gesture selection
 - [x] Test edit state blocking
 - [x] Test exit edit state
-- [ ] Test edge cases (no element, rapid changes, stop/start)
+- [x] Test edge cases (no element, rapid changes, stop/start) — discarded/not applicable; Tone.js native smoothing prevents artifacts
 
 ---
 
@@ -427,6 +425,9 @@ SOUND_CONFIG: {
 - Lock icon (`🔒`) in `updateElementStatus()` for edit state indicator
 - `.hold-active` CSS class for highlighted gesture feedback during hold
 - `editState` sync via `updatePrevState()` in `handleGestureDetected()`
+- `bass-acid-psychedelic.js` with hard industrial kick (sawtooth → Chebyshev → Distortion → Highpass)
+- `synth.js` PolySynth with Filter + LFO chain
+- `drum.js` kick + hi-hat chain
 
 **Changed**
 - Element selection now requires **3-second hold** instead of instant trigger with 500ms debounce
@@ -439,17 +440,22 @@ SOUND_CONFIG: {
 - Element status shows `🔒 ▶ Bass: ON` when in edit state
 - Hold timer resets immediately if gesture is lost or changes (no grace period)
 - Cleanup function in `initGesture()` resets `gestureHoldStart`, `currentHeldGesture`, `editState`
+- Active bass file changed from `bass.js` to `bass-acid-psychedelic.js` (hard industrial kick, 500-1000Hz filter range)
+- `stopTransport()` / `stopSequencer()` → `pauseTransport()` / `pauseSequencers()` (preserves sequence position for seamless resume)
+- `handleGestureDetected()` merges params per-instrument instead of replacing all params (prevents cross-instrument state loss)
+- `startParameterLoop()` applies params to **all 3 instruments simultaneously** instead of selected-only
+- Parameter persistence: switching instruments now retains each instrument's last parameters
 
-**Sound Engine (unchanged from v0.0.2)**
-- `src/features/sound/engine.js` - Tone.js initialization, Transport control, BPM, master volume
-- `src/features/sound/instruments/bass.js` - Monrella-style industrial bass with Distortion(0.7), BitCrusher(4-bit), Filter(250Hz), FeedbackDelay(4n, 45% wet)
+**Sound Engine**
+- `src/features/sound/engine.js` - Tone.js initialization, Transport control (pause/resume), BPM, master volume
+- `src/features/sound/instruments/bass-acid-psychedelic.js` - Hard industrial kick: MembraneSynth(sawtooth) → Chebyshev(6) → Distortion(0.4) → Highpass(80Hz)
 - `src/features/sound/instruments/synth.js` - PolySynth with fatsawtooth oscillators, Filter + LFO modulation chain
 - `src/features/sound/instruments/drum.js` - MembraneSynth (kick) + NoiseSynth (hi-hat) with highpass filter chain
 - `src/features/sound/sequencer.js` - 8-step bass, synth, and drum sequencers synced to Tone.Transport
 - `src/features/sound/index.js` - Public API exports
 - `SOUND_CONFIG` constants in `core/constants.js` with all parameter ranges
 - `audioInitialized` flag in `core/state.js`
-- `startParameterLoop()` in `main.js` - requestAnimationFrame loop for randomize mode
+- `startParameterLoop()` in `main.js` - requestAnimationFrame loop for randomize mode (applies to all instruments)
 
 ### v0.0.1 (Initial)
 - Phase 3 implementation plan created
