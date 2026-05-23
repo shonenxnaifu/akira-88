@@ -3,10 +3,11 @@
 ## Overview
 - **Version**: 0.0.1
 - **Duration**: 6-8 hours
-- **Goal**: Implement PixiJS animation system with instrument-specific electrical effects synced to audio beat and hand movement
+- **Goal**: Implement PixiJS animation system with instrument-specific electrical effects (plasma arcs, energy streams, particle sparks) synced to audio beat and hand movement
 - **Prerequisites**: Phase 3 completed (sound engine, gesture UX, 3-second hold system)
 - **Status**: Not Started
 - **Dependency**: PixiJS library (WebGL renderer for high-performance particle effects)
+- **Reference**: Bass plasma arcs inspired by electrical discharge photography (thin white core + warm orange glow)
 
 ---
 
@@ -31,7 +32,7 @@
 PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 ├── Background Layer (semi-transparent dark navy #1A1A2E)
 ├── Effect Layer (electrical effects between hands)
-│   ├── Bass: Lightning bolts (warm orange #FF6B35) + bloom
+│   ├── Bass: Plasma arcs (white core + warm orange #FF6B35 glow)
 │   ├── Synth: Energy streams (warm purple #B849E8) + bloom
 │   └── Drum: Particle sparks (warm gold #FFD700) + bloom
 └── Hand Tracking (effect anchor points from MediaPipe positions)
@@ -64,28 +65,30 @@ PixiJS Application (WebGL canvas overlay, transparent, pointer-events: none)
 
 **`getAnimationIntensity()`** - Combines beat + hand movement speed for dynamic intensity.
 
-### 3. Effect: Lightning Bolts (Bass - #FF6B35) + Bloom
+### 3. Effect: Plasma Arcs (Bass - #FF6B35) + Bloom
 
-**Visual:** Thick, jagged lightning bolts between hands. Warm orange/red color. Powerful, slow pulses synced to kick drum hits.
+**Visual:** Thin plasma arcs between hands. White-hot core with warm orange glow. Organic branching pattern with subtle shimmer. Inspired by electrical discharge photography.
 
 **Implementation:**
-- Use PixiJS Graphics to draw bezier curves with jagged offsets
-- Bolt path follows hand positions (start: left hand, end: right hand)
+- Use PixiJS Graphics to draw bezier curves with random displacement
+- Arc path follows hand positions (start: left hand, end: right hand)
 - Intensity increases on bass drum hits
-- Multiple bolts (2-4) with varying thickness
-- Post-processing bloom filter for glow
+- Multiple arcs (2-5) with organic sub-branching
+- White core (#FFFFFF) with warm orange bloom (#FF6B35)
+- Animated jitter on control points for shimmer effect
 
-**`createLightningBolt(startX, startY, endX, endY, intensity)`** - Generate jagged bolt path with random offsets.
+**`createPlasmaArc(startX, startY, endX, endY, intensity)`** - Generate organic bezier path with random displacement and branching.
 
-**`updateBassEffect(delta)`** - Animate bolts: fade in/out, pulse width, add branching sub-bolts on high intensity.
+**`updateBassEffect(delta)`** - Animate arcs: jitter control points, pulse opacity, add sub-branches on high intensity.
 
 **Parameters:**
 | Param | Range | Effect |
 |---|---|---|
-| `boltCount` | 1-4 | Number of simultaneous bolts |
-| `boltThickness` | 2-8px | Bolt line width |
-| `pulseSpeed` | 0.1-1.0 | How fast bolts flash |
-| `branchProbability` | 0-0.5 | Chance of sub-bolt branching |
+| `arcCount` | 2-5 | Number of simultaneous arcs |
+| `arcThickness` | 1-3px | Core line width |
+| `branchDepth` | 2-4 levels | How many times arcs split |
+| `jitterAmount` | 5-15px | Random displacement on control points |
+| `pulseSpeed` | 0.1-0.8 | How fast arcs flicker/shimmer |
 
 ### 4. Effect: Energy Streams (Synth - #B849E8) + Bloom
 
@@ -219,14 +222,17 @@ When user enters randomize mode (both hands crystal ball pose):
 ```js
 ANIMATION_CONFIG: {
   // Colors
-  BASS_COLOR: 0xFF6B35,      // Warm orange
-  SYNTH_COLOR: 0xB849E8,     // Warm purple
-  DRUM_COLOR: 0xFFD700,      // Warm gold
-  BG_COLOR: 0x1A1A2E,        // Dark navy (semi-transparent overlay)
+  BASS_CORE_COLOR: 0xFFFFFF,   // White hot core
+  BASS_GLOW_COLOR: 0xFF6B35,   // Warm orange outer aura
+  SYNTH_COLOR: 0xB849E8,       // Warm purple
+  DRUM_COLOR: 0xFFD700,        // Warm gold
+  BG_COLOR: 0x1A1A2E,          // Dark navy (semi-transparent overlay)
   
-  // Lightning (Bass)
-  BASS_BOLT_COUNT: 3,
-  BASS_BOLT_THICKNESS: 5,
+  // Plasma Arcs (Bass)
+  BASS_ARC_COUNT: 3,
+  BASS_ARC_THICKNESS: 2,
+  BASS_BRANCH_DEPTH: 3,
+  BASS_JITTER_AMOUNT: 10,
   BASS_PULSE_SPEED: 0.5,
   
   // Streams (Synth)
@@ -264,13 +270,13 @@ ANIMATION_CONFIG: {
 - [ ] Cleanup function disposes all resources
 - [ ] Gesture detection still works normally (MediaPipe reads video behind canvas)
 
-### 2. Lightning Effect (Bass)
-- [ ] Bolts appear between hands when bass + randomize mode active
-- [ ] Bolt color is warm orange (#FF6B35)
-- [ ] Multiple bolts (2-4) render simultaneously
-- [ ] Bolts pulse/thicken on kick drum hits
-- [ ] Jagged path looks like real lightning
-- [ ] Bloom/glow effect visible
+### 2. Plasma Arc Effect (Bass)
+- [ ] Thin arcs appear between hands when bass + randomize mode active
+- [ ] Arc color: white core (#FFFFFF) with warm orange glow (#FF6B35)
+- [ ] Multiple arcs (2-5) render simultaneously with organic branching
+- [ ] Arcs pulse/shimmer on kick drum hits
+- [ ] Organic bezier curves with jitter look like real plasma discharge
+- [ ] Bloom/glow effect creates soft orange aura
 - [ ] Effect clears instantly when randomize mode exits
 
 ### 3. Energy Stream Effect (Synth)
@@ -333,12 +339,12 @@ ANIMATION_CONFIG: {
 - [ ] Implement `destroyPixiJS()` cleanup
 - [ ] Create PixiJS ticker loop synced to RAF
 
-### Lightning Effect (Bass)
-- [ ] Implement `createLightningBolt()` bezier path generation with jagged offsets
-- [ ] Implement bolt pooling (reuse Graphics objects)
-- [ ] Add branching sub-bolt logic
-- [ ] Implement pulse animation (thickness/opacity)
-- [ ] Add bloom/glow filter
+### Plasma Arc Effect (Bass)
+- [ ] Implement `createPlasmaArc()` bezier path generation with random displacement
+- [ ] Implement arc pooling (reuse Graphics objects)
+- [ ] Add organic sub-branching logic (2-4 levels deep)
+- [ ] Implement jitter animation on control points for shimmer
+- [ ] Add bloom/glow filter (white core + orange aura)
 
 ### Energy Stream Effect (Synth)
 - [ ] Implement `createEnergyStream()` sine-wave path generation
@@ -398,7 +404,7 @@ ANIMATION_CONFIG: {
 - `src/features/animation/engine.js` - PixiJS setup and render loop
 - `src/features/animation/state.js` - animation state management
 - `src/features/animation/manager.js` - effect show/hide/update lifecycle
-- `src/features/animation/effects/lightning.js` - bass lightning bolts
+- `src/features/animation/effects/plasma.js` - bass plasma arcs (white core + orange glow)
 - `src/features/animation/effects/streams.js` - synth energy streams
 - `src/features/animation/effects/sparks.js` - drum particle sparks
 - `src/features/animation/sync.js` - Tone.Transport beat sync
@@ -417,8 +423,9 @@ ANIMATION_CONFIG: {
 - Canvas has `pointer-events: none` to not interfere with UI or gesture detection
 - Effects render between left/right hand positions (normalized → screen coords)
 - ParticleContainer used for sparks (hundreds of particles, GPU-accelerated)
-- Graphics used for lightning and streams (bezier curves, dynamic paths)
+- Graphics used for plasma arcs and streams (bezier curves, dynamic paths)
 - Tone.Draw schedules animation updates on exact audio clock
 - All effects use instant swap (no fade transitions)
 - Bloom/glow filters applied to all effects for visual impact
+- Bass plasma arcs: white core (#FFFFFF) with warm orange bloom (#FF6B35)
 - Animation only active during randomize mode with both hands visible
