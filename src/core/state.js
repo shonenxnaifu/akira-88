@@ -19,5 +19,17 @@ export const appState = {
   handAngles: {
     left: null,
     right: null
+  },
+  animationInitialized: false,
+  currentEffect: null,
+  animationIntensity: 0,
+  handMovementSpeed: 0,
+  lastHandPosition: {
+    left: { x: 0, y: 0 },
+    right: { x: 0, y: 0 }
+  },
+  handPositions: {
+    left: { x: 0, y: 0 },
+    right: { x: 0, y: 0 }
   }
 };

@@ -13,6 +13,7 @@
 #animation-container canvas {
   position: relative;
   z-index: 0;
+  pointer-events: none;
 }
 
 #ui-panel {

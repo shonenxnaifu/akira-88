@@ -2,7 +2,7 @@ import { appState } from './core/state.js';
 import { BPM_MIN, BPM_MAX, GESTURES } from './core/constants.js';
 import { clamp } from './core/utils.js';
 import { initGesture, getHandLandmarks, updatePrevState, countExtendedFingers, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './features/gesture/index.js';
-import { initAnimation, updateVideoTexture } from './features/animation/renderer.js';
+import { initAnimation, updateVideoTexture, initAnimationEngine, showEffect, hideEffect, updateEffect, updateHandPositions } from './features/animation/index.js';
 import { initAudio, startTransport, pauseTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, pauseSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated, createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './features/sound/index.js';
 
 const PARAM_LABELS = {
@@ -87,9 +87,13 @@ async function handlePlayClick() {
   if (appState.isPlaying) {
     startTransport(appState.bpm);
     startSequencers();
+    if (appState.randomizeMode && appState.selectedElement === 'bass' && appState.elements.bass.active) {
+      showEffect('bass');
+    }
   } else {
     pauseSequencers();
     pauseTransport();
+    hideEffect();
   }
 
   updatePrevState({ isPlaying: appState.isPlaying });
@@ -111,8 +115,14 @@ function startWebcam() {
   console.log('[1/3] Initializing PixiJS...');
   const pixiApp = initAnimation(videoElement);
 
-  pixiApp.ticker.add(() => {
+  console.log('[1.5/3] Initializing animation engine...');
+  initAnimationEngine();
+
+  pixiApp.ticker.add((delta) => {
     updateVideoTexture();
+    const { landmarks, handedness } = getHandLandmarks();
+    updateHandPositions(landmarks, handedness);
+    updateEffect(delta);
   });
 
   console.log('[2/3] Initializing MediaPipe gesture detection...');
@@ -174,9 +184,12 @@ function handleGestureDetected(result) {
         };
         updateParameterDisplay();
         const el = appState.selectedElement;
-        if (el) {
+        if (el === 'bass') {
           const p = appState.parameters[el];
           console.log('[Randomize]', el, Object.entries(p).map(([k, v]) => `${k}: ${v.toFixed(2)}`).join(', '));
+          if (appState.isPlaying && appState.elements[el].active) {
+            showEffect('bass');
+          }
         }
       }
       break;
@@ -184,6 +197,7 @@ function handleGestureDetected(result) {
       if (appState.randomizeMode) {
         appState.randomizeMode = false;
         hideParameterDisplay();
+        hideEffect();
         console.log('[Randomize] Exited randomize mode');
       }
       break;
@@ -203,6 +217,11 @@ function selectElement(element) {
   appState.editState = true;
   updateElementStatus();
   console.log(`Selected element: ${element}, entered edit state`);
+  
+  if (appState.randomizeMode && appState.isPlaying && element === 'bass') {
+    hideEffect();
+    showEffect('bass');
+  }
 }
 
 function toggleMute() {
@@ -290,6 +309,8 @@ function startHandDetectionLoop() {
   setInterval(() => {
     const { landmarks, handedness } = getHandLandmarks();
     frameCount++;
+
+    updateHandPositions(landmarks, handedness);
 
     if (landmarks.length === 0) {
       if (frameCount % 3 === 0) {
