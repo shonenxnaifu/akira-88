@@ -15,31 +15,41 @@ A real-time web app that allows users to create and modify techno tracks using h
 ---
 
 ## Core Flow
-1. User shows specific right-hand gesture to select element (bass/synth/drum)
-2. User starts/stops track with left-hand thumb gesture (thumb only extended)
-3. User enters randomization mode (both hands open, crystal ball pose) to continuously modify parameters while element is active
-4. User can modify other elements while others are still playing
-5. Electrical animations appear between hands, unique per element
-6. All 3 elements can play simultaneously
+1. User shows specific right-hand gesture to select element (bass/synth/drum) — **must hold for 3 seconds**
+2. After 3s hold, element is selected and user enters **edit state** (locked to current instrument)
+3. User starts/stops track with left-hand thumb gesture (thumb only extended)
+4. User enters randomization mode (both hands open, crystal ball pose) to continuously modify parameters while in edit state
+5. To exit edit state, hold the same selection gesture for 3 seconds again
+6. To select another element, must exit edit state first, then hold new gesture for 3 seconds
+7. User can modify other elements while others are still playing
+8. Electrical animations appear between hands, unique per element
+9. All 3 elements can play simultaneously
 
 ---
 
 ## Gesture Definitions
 | Gesture | Hand Configuration | Action |
 |---------|-------------------|--------|
-| Select Bass | Right hand: only index finger extended | Select bass element |
-| Select Synth | Right hand: index + middle finger extended | Select synth element |
-| Select Drum | Right hand: index + middle + ring finger extended | Select drum element |
+| Select Bass | Right hand: only index finger extended | Select bass element (hold 3s) |
+| Select Synth | Right hand: index + middle finger extended | Select synth element (hold 3s) |
+| Select Drum | Right hand: index + middle + ring finger extended | Select drum element (hold 3s) |
 | Play/Stop | Left hand: thumb only extended | Toggle playback |
 | Mute Toggle | Right hand: closed fist | Toggle mute for selected element |
+| Exit Edit Mode | Right hand: same gesture as selected element | Exit edit state (hold 3s) |
 | Randomize Mode | Both hands open (≥4 fingers each), palms facing each other like holding crystal ball | Activate continuous parameter randomization |
 
 **Notes:**
-- Element selection persists until another element is selected
+- Element selection requires **3-second hold** to trigger — prevents accidental switching
+- After selection, user enters **edit state** (locked to current instrument, 🔒 indicator shown)
+- While in edit state, other selection gestures are **blocked** with feedback: `"🔒 Select Synth blocked - exit edit first"`
+- To exit edit state, hold the **same** selection gesture for 3 seconds again
+- To select another element, must exit edit state first
 - Randomize mode only works when an element is selected and active/playing
 - Randomize mode takes priority over other gestures when active
 - Hand rotation calculated using wrist → index finger base → index finger tip angle
 - Volume control is manual via UI sliders (not gesture-based)
+- Hold progress shows countdown: `"🔒 Holding Select Bass... 1.5s / 3.0s"`
+- Hold timer resets immediately if gesture is lost or changes (no grace period)
 
 ---
 
@@ -102,9 +112,10 @@ Each element has unique electrical effect between hands during randomize mode:
 
 ## UI/UX
 - **Element Status Panel** (top-left): Shows active elements, mute status, BPM input (number input with up/down arrows, range 60-220)
+- **Edit State Indicator**: Selected element shows lock icon (🔒) when in edit state, e.g. `🔒 ▶ Bass: ON`
 - **Volume Section**: Master volume slider + per-element sliders (Bass, Synth, Drum) with real-time value display
 - **Parameter Display**: Shows current parameter values as numbers during randomize mode (labels change based on selected instrument)
-- **Gesture Feedback**: Current detected gesture indicator
+- **Gesture Feedback**: Current detected gesture indicator; shows hold countdown during 3s hold (`🔒 Holding Select Bass... 1.5s / 3.0s`)
 - **Play Button**: Top-left with other controls, required to start audio context on page load
 - **No tutorial**: Direct interaction
 - **Webcam**: Starts on page load
@@ -131,6 +142,9 @@ Each element has unique electrical effect between hands during randomize mode:
 - **Element selection**: Uses `countFourFingers()` (excludes thumb) for reliable detection
 - **Volume**: Manual UI sliders only, no gesture-based volume control
 - **Gesture debouncing**: 500ms between same gesture triggers; randomize mode exempt for continuous updates
+- **Edit state system**: 3-second hold required for instrument selection; edit state locks to current instrument; same gesture held for 3s exits edit state
+- **Hold timer**: Resets immediately if gesture is lost or changes (no grace period)
+- **Gesture progress callback**: `onGestureProgress` fires every frame during hold with elapsed time for real-time UI feedback
 
 ---
 
@@ -190,6 +204,25 @@ Each element has unique electrical effect between hands during randomize mode:
 - Phase 2 marked as completed
 - Volume control moved from gesture to manual UI (simpler, more precise)
 - Parameters restructured from flat `{ pitch, filter, rhythm }` to nested `{ bass: {...}, synth: {...}, drum: {...} }`
+
+### Sound Engine Added
+- Tone.js instruments: Bass (MembraneSynth → Distortion → BitCrusher → Filter → Delay), Synth (PolySynth + Filter + LFO), Drum (MembraneSynth + NoiseSynth)
+- 8-step sequencer patterns synced to Tone.Transport
+- Parameter application loop for randomize mode
+- Volume/mute integration with UI sliders
+
+### Gesture UX Overhaul
+- **3-second hold system**: Element selection now requires holding the gesture for 3 seconds (was: instant trigger with 500ms debounce)
+- **Edit state**: After selection, user enters edit state (locked to current instrument) — prevents accidental switching during parameter adjustment
+- **Exit edit state**: Hold the same selection gesture for 3 seconds again to exit edit state
+- **Blocked gestures**: While in edit state, different-element selection gestures are blocked with feedback: `"🔒 Select Synth blocked - exit edit first"`
+- **Hold progress feedback**: Real-time countdown during hold: `"🔒 Holding Select Bass... 1.5s / 3.0s"`
+- **Lock icon**: Selected element shows 🔒 in status panel when in edit state (e.g. `🔒 ▶ Bass: ON`)
+- **Hold timer**: Resets immediately if gesture is lost or changes (no grace period)
+- **New gesture**: `EXIT_EDIT` added to GESTURES constant
+- **New state field**: `editState: false` added to appState
+- **New callback**: `onGestureProgress` added to `initGesture()` for real-time hold feedback
+- **CSS**: `.hold-active` class for highlighted gesture feedback during hold
 
 ---
 
