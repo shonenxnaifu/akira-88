@@ -392,8 +392,8 @@ SOUND_CONFIG: {
 - [x] Update BPM handler to call `setBPM()`
 - [x] Update volume handlers to call Tone.js setters
 - [x] Update mute handler to call Tone.js setters
-- [ ] Wire `handleGestureDetected()` to full parameter application
-- [ ] Test full flow: gesture → parameter → sound
+- [x] Wire `handleGestureDetected()` to full parameter application
+- [x] Test full flow: gesture → parameter → sound
 
 ### Testing
 - [x] Test audio initialization on play click

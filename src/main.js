@@ -168,11 +168,14 @@ function handleGestureDetected(result) {
     case GESTURES.RANDOMIZE_MODE:
       if (params) {
         appState.randomizeMode = true;
-        appState.parameters = params;
+        appState.parameters = {
+          ...appState.parameters,
+          [appState.selectedElement]: params[appState.selectedElement]
+        };
         updateParameterDisplay();
         const el = appState.selectedElement;
         if (el) {
-          const p = params[el];
+          const p = appState.parameters[el];
           console.log('[Randomize]', el, Object.entries(p).map(([k, v]) => `${k}: ${v.toFixed(2)}`).join(', '));
         }
       }
@@ -326,15 +329,10 @@ function startHandDetectionLoop() {
 
 function startParameterLoop() {
   function applyParams() {
-    if (appState.randomizeMode && appState.selectedElement) {
-      const el = appState.selectedElement;
-      if (el === 'bass') {
-        updateBassParams(appState.parameters.bass);
-      } else if (el === 'synth') {
-        updateSynthParams(appState.parameters.synth);
-      } else if (el === 'drum') {
-        updateDrumParams(appState.parameters.drum);
-      }
+    if (appState.randomizeMode) {
+      updateBassParams(appState.parameters.bass);
+      updateSynthParams(appState.parameters.synth);
+      updateDrumParams(appState.parameters.drum);
     }
 
     requestAnimationFrame(applyParams);
