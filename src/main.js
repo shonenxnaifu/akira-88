@@ -248,7 +248,7 @@ function updateElementStatus() {
       const isSelected = appState.selectedElement === el;
       const inEdit = appState.editState && isSelected;
       const statusText = state.active ? (state.muted ? 'MUTED' : 'ON') : 'OFF';
-      const label = inEdit ? `🔒 ▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : (isSelected ? `▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : `${el.charAt(0).toUpperCase() + el.slice(1)}`);
+      const label = inEdit ? `⍉ ▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : (isSelected ? `▶ ${el.charAt(0).toUpperCase() + el.slice(1)}` : `${el.charAt(0).toUpperCase() + el.slice(1)}`);
       statusEl.innerHTML = `${label}: <span class="status">${statusText}</span>`;
       console.log(`[updateElementStatus] ${el}: label="${label}", status="${statusText}"`);
     }
@@ -270,13 +270,13 @@ function handleGestureProgress(progress) {
 
   if (progress.blocked) {
     const label = GESTURE_LABELS[progress.gesture] || progress.gesture;
-    feedbackEl.textContent = `🔒 ${label} blocked - exit edit first`;
+    feedbackEl.textContent = `⍉ ${label} blocked - exit edit first`;
     return;
   }
 
   const label = GESTURE_LABELS[progress.gesture] || progress.gesture;
   const seconds = (progress.elapsed / 1000).toFixed(1);
-  feedbackEl.textContent = `🔒 Holding ${label}... ${seconds}s / 3.0s`;
+  feedbackEl.textContent = `⍉ Holding ${label}... ${seconds}s / 3.0s`;
 }
 
 function updateParameterDisplay() {
