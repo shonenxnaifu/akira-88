@@ -1,19 +1,19 @@
 import * as PIXI from 'pixi.js';
 import { ANIMATION_CONFIG } from '../../../core/constants.js';
 
-const MAX_ARCS = 5;
-const MIN_ARCS = 2;
+const SEGMENT_COUNT = 20;
+const FLICKER_INTERVAL_MS = 70;
 
 let arcPool = [];
 let activeArcs = [];
-let time = 0;
+let lastFlickerTime = 0;
 
 function createArcGraphics() {
   const core = new PIXI.Graphics();
   const glow = new PIXI.Graphics();
   core.blendMode = PIXI.BLEND_MODES.ADD;
   glow.blendMode = PIXI.BLEND_MODES.ADD;
-  return { core, glow, active: false, controlPoints: [], branchPoints: [] };
+  return { core, glow, active: false, thunderPath: [], branchPoints: [] };
 }
 
 function getArcFromPool() {
@@ -29,83 +29,67 @@ function returnArcToPool(arc) {
   arc.active = false;
   arc.core.clear();
   arc.glow.clear();
-  arc.controlPoints = [];
+  arc.thunderPath = [];
   arc.branchPoints = [];
   arcPool.push(arc);
 }
 
-function generateControlPoints(startX, startY, endX, endY, jitterAmount) {
+function generateThunderPath(startX, startY, endX, endY, jitterAmount) {
   const dx = endX - startX;
   const dy = endY - startY;
   const dist = Math.sqrt(dx * dx + dy * dy);
 
   if (dist < 1) {
-    return [
-      { x: startX, y: startY },
-      { x: startX, y: startY - 50 },
-      { x: endX, y: endY + 50 },
-      { x: endX, y: endY }
-    ];
+    return [{ x: startX, y: startY }, { x: endX, y: endY }];
   }
 
   const perpX = -dy / dist;
   const perpY = dx / dist;
 
-  const offset = (Math.random() - 0.5) * jitterAmount * 2;
+  const path = [{ x: startX, y: startY }];
 
-  const cp1 = {
-    x: startX + dx * 0.3 + perpX * offset * 0.5,
-    y: startY + dy * 0.3 + perpY * offset * 0.5
-  };
+  for (let i = 1; i < SEGMENT_COUNT; i++) {
+    const t = i / SEGMENT_COUNT;
+    const baseX = startX + dx * t;
+    const baseY = startY + dy * t;
 
-  const cp2 = {
-    x: startX + dx * 0.7 + perpX * offset * 0.7,
-    y: startY + dy * 0.7 + perpY * offset * 0.7
-  };
+    const offset = (Math.random() - 0.5) * jitterAmount * 2;
 
-  return [
-    { x: startX, y: startY },
-    cp1,
-    cp2,
-    { x: endX, y: endY }
-  ];
+    path.push({
+      x: baseX + perpX * offset,
+      y: baseY + perpY * offset
+    });
+  }
+
+  path.push({ x: endX, y: endY });
+
+  return path;
 }
 
-function jitterPoints(points, amount) {
-  return points.map((p, i) => {
-    if (i === 0 || i === points.length - 1) return p;
-    return {
-      x: p.x + (Math.random() - 0.5) * amount,
-      y: p.y + (Math.random() - 0.5) * amount
-    };
-  });
-}
-
-function drawArcPath(graphics, points, color, thickness, alpha) {
-  if (points.length < 2) return;
+function drawThunderPath(graphics, path, color, thickness, alpha) {
+  if (path.length < 2) return;
 
   graphics.lineStyle(thickness, color, alpha);
-  graphics.moveTo(points[0].x, points[0].y);
+  graphics.moveTo(path[0].x, path[0].y);
 
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const cpx = (prev.x + curr.x) / 2 + (Math.random() - 0.5) * 5;
-    const cpy = (prev.y + curr.y) / 2 + (Math.random() - 0.5) * 5;
-    graphics.quadraticCurveTo(cpx, cpy, curr.x, curr.y);
+  for (let i = 1; i < path.length; i++) {
+    graphics.lineTo(path[i].x, path[i].y);
   }
 }
 
-function drawBranches(graphics, points, depth, maxDepth, color, thickness, alpha, jitterAmount) {
+function drawBranches(graphics, path, depth, maxDepth, baseColor, thickness, alpha, jitterAmount) {
   if (depth >= maxDepth) return;
 
-  const branchAlpha = alpha * (0.5 - depth * 0.1);
-  const branchThickness = Math.max(0.5, thickness - depth * 0.5);
+  const CRIMSON = 0xDC143C;
+  const branchAlpha = alpha * 0.9;
+  
+  const crimsonMix = depth / maxDepth;
+  const branchColor = depth === 0 ? CRIMSON : Math.round(CRIMSON * (1 - crimsonMix) + baseColor * crimsonMix);
 
-  for (let i = 1; i < points.length - 1; i++) {
+  for (let i = 1; i < path.length - 1; i++) {
     if (Math.random() > 0.3) continue;
 
-    const p = points[i];
+    const p = path[i];
     const branchLength = 20 + Math.random() * 30;
     const angle = Math.random() * Math.PI * 2;
     const endX = p.x + Math.cos(angle) * branchLength;
@@ -120,8 +104,11 @@ function drawBranches(graphics, points, depth, maxDepth, color, thickness, alpha
       { x: endX, y: endY }
     ];
 
-    drawArcPath(graphics, branchPoints, color, branchThickness, branchAlpha);
-    drawBranches(graphics, branchPoints, depth + 1, maxDepth, color, branchThickness, branchAlpha, jitterAmount);
+    graphics.lineStyle(thickness, branchColor, branchAlpha);
+    graphics.moveTo(branchPoints[0].x, branchPoints[0].y);
+    graphics.quadraticCurveTo(branchPoints[1].x, branchPoints[1].y, branchPoints[2].x, branchPoints[2].y);
+
+    drawBranches(graphics, branchPoints, depth + 1, maxDepth, baseColor, thickness, branchAlpha, jitterAmount);
   }
 }
 
@@ -130,23 +117,36 @@ export function createPlasmaArc(connections, intensity) {
 
   connections.forEach((conn) => {
     const arc = getArcFromPool();
-    arc.controlPoints = generateControlPoints(conn.start.x, conn.start.y, conn.end.x, conn.end.y, jitterAmount);
+    arc.thunderPath = generateThunderPath(conn.start.x, conn.start.y, conn.end.x, conn.end.y, jitterAmount);
     activeArcs.push(arc);
   });
 }
 
 export function updatePlasmaEffect(delta, intensity) {
-  time += delta * ANIMATION_CONFIG.BASS_PULSE_SPEED;
+  const now = performance.now();
+  const shouldFlicker = now - lastFlickerTime >= FLICKER_INTERVAL_MS;
+
+  if (shouldFlicker) {
+    lastFlickerTime = now;
+
+    activeArcs.forEach((arc) => {
+      if (!arc.active) return;
+      const jitterAmount = 40 * intensity;
+      const startX = arc.thunderPath[0].x;
+      const startY = arc.thunderPath[0].y;
+      const endX = arc.thunderPath[arc.thunderPath.length - 1].x;
+      const endY = arc.thunderPath[arc.thunderPath.length - 1].y;
+      arc.thunderPath = generateThunderPath(startX, startY, endX, endY, jitterAmount);
+    });
+  }
 
   const baseThickness = 4;
-  const baseJitter = 40;
   const baseAlpha = 0.7;
 
   activeArcs.forEach((arc) => {
     if (!arc.active) return;
 
-    const jitteredPoints = jitterPoints(arc.controlPoints, baseJitter * intensity);
-    const pulseAlpha = baseAlpha + 0.3 * Math.sin(time * Math.PI * 2 + Math.random());
+    const pulseAlpha = baseAlpha + 0.3 * Math.sin(now * 0.01 + Math.random());
     const finalAlpha = Math.max(0.4, pulseAlpha * intensity);
 
     arc.core.clear();
@@ -155,10 +155,10 @@ export function updatePlasmaEffect(delta, intensity) {
     const coreThickness = Math.max(2, baseThickness * intensity);
     const glowThickness = Math.max(4, baseThickness * 2 * intensity);
 
-    drawArcPath(arc.core, jitteredPoints, ANIMATION_CONFIG.BASS_CORE_COLOR, coreThickness, finalAlpha);
-    drawArcPath(arc.glow, jitteredPoints, ANIMATION_CONFIG.BASS_GLOW_COLOR, glowThickness, finalAlpha * 0.6);
+    drawThunderPath(arc.core, arc.thunderPath, ANIMATION_CONFIG.BASS_CORE_COLOR, coreThickness, finalAlpha);
+    drawThunderPath(arc.glow, arc.thunderPath, ANIMATION_CONFIG.BASS_GLOW_COLOR, glowThickness, finalAlpha * 0.6);
 
-    drawBranches(arc.glow, jitteredPoints, 0, ANIMATION_CONFIG.BASS_BRANCH_DEPTH, ANIMATION_CONFIG.BASS_GLOW_COLOR, coreThickness, finalAlpha * 0.4, baseJitter * 0.3);
+    drawBranches(arc.glow, arc.thunderPath, 0, ANIMATION_CONFIG.BASS_BRANCH_DEPTH, ANIMATION_CONFIG.BASS_GLOW_COLOR, coreThickness, finalAlpha * 0.9, 15);
   });
 
   return activeArcs.length;
