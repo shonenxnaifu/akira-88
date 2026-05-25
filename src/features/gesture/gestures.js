@@ -67,7 +67,7 @@ export function calculateRandomizeParams(leftHand, rightHand) {
   const param3 = Math.max(-1, Math.min(1, rightRotation / Math.PI));
 
   return {
-    bass: { pitch: param1, filter: param2, resonance: param3 },
+    bass: { delay: param1, filter: param2, resonance: param3 },
     synth: { detune: param1, filter: param2, lfoRate: param3 },
     drum: { decay: param1, velocity: param2, noiseFilter: param3 }
   };

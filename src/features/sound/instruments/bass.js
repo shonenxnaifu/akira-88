@@ -1,12 +1,10 @@
 import * as Tone from "tone";
 import { getMasterVolume } from "../engine.js";
 
-const BASS_NOTES = [69.3, 73.42, 82.41, 87.31, 98.0, 110.0, 123.47, 130.81];
-//                  C#2    D2     E2     F2     G2    A2     B2     C3
-
 let synth = null;
 let filter = null;
 let volume = null;
+let delay = null;
 let isCreated = false;
 let highpass = null;
 
@@ -19,7 +17,7 @@ export function createBass() {
   filter.Q.value = 22;
   const distortion = new Tone.Distortion(0.7);
   const chebyshev = new Tone.Chebyshev(2);
-  const delay = new Tone.FeedbackDelay("8n", 0.7);
+  delay = new Tone.FeedbackDelay("8n", 0.1);
   delay.wet.value = 0.4;
   const reverb = new Tone.Reverb({
     decay: 3.0,
@@ -55,11 +53,10 @@ export function createBass() {
 }
 
 export function updateBassParams(params) {
-  if (!synth || !filter) return;
+  if (!synth || !filter || !delay) return;
 
-  const noteIndex = Math.round(((params.pitch + 1) / 2) * 7);
-  const clampedIndex = Math.max(0, Math.min(7, noteIndex));
-  synth.frequency.value = BASS_NOTES[clampedIndex];
+  const feedback = 0.1 + ((params.delay + 1) / 2) * 0.9;
+  delay.feedback.value = feedback;
 
   const freq = 500 + params.filter * (1000 - 500);
   filter.frequency.value = freq;

@@ -6,13 +6,13 @@ import { initAnimation, updateVideoTexture, initAnimationEngine, showEffect, hid
 import { initAudio, startTransport, pauseTransport, setBPM, setMasterVolume, createBass, updateBassParams, setBassVolume, setBassMute, isAudioInitialized, createSequencers, startSequencers, pauseSequencers, createSynth, updateSynthParams, setSynthVolume, setSynthMute, isSynthCreated, createDrum, updateDrumParams, setDrumVolume, setDrumMute, isDrumCreated } from './features/sound/index.js';
 
 const PARAM_LABELS = {
-  bass: ['Pitch', 'Filter', 'Resonance'],
+  bass: ['Delay', 'Filter', 'Resonance'],
   synth: ['Detune', 'Filter', 'LFO Rate'],
   drum: ['Decay', 'Velocity', 'Noise Filter']
 };
 
 const PARAM_KEYS = {
-  bass: ['pitch', 'filter', 'resonance'],
+  bass: ['delay', 'filter', 'resonance'],
   synth: ['detune', 'filter', 'lfoRate'],
   drum: ['decay', 'velocity', 'noiseFilter']
 };
@@ -279,6 +279,27 @@ function handleGestureProgress(progress) {
   feedbackEl.textContent = `⍉ Holding ${label}... ${seconds}s / 3.0s`;
 }
 
+function getDisplayValue(el, key, raw) {
+  const mappings = {
+    bass: {
+      delay: () => (0.1 + ((raw + 1) / 2) * 0.9).toFixed(2),
+      filter: () => Math.round(500 + raw * 500).toString(),
+      resonance: () => (((raw + 1) / 2) * 22).toFixed(1),
+    },
+    synth: {
+      detune: () => (raw * 30).toFixed(1),
+      filter: () => Math.round(300 + ((raw + 1) / 2) * 3700).toString(),
+      lfoRate: () => (0.1 + ((raw + 1) / 2) * 4.9).toFixed(2),
+    },
+    drum: {
+      decay: () => (0.15 + ((raw + 1) / 2) * 0.35).toFixed(2),
+      velocity: () => Math.round(2000 + ((raw + 1) / 2) * 4000).toString(),
+      noiseFilter: () => (0.2 + ((raw + 1) / 2) * 0.4).toFixed(2),
+    },
+  };
+  return mappings[el]?.[key]?.() ?? raw.toFixed(2);
+}
+
 function updateParameterDisplay() {
   const displayEl = document.getElementById('parameter-display');
   if (!displayEl) return;
@@ -292,7 +313,7 @@ function updateParameterDisplay() {
   const keys = PARAM_KEYS[el];
 
   displayEl.innerHTML = keys.map((key, i) =>
-    `<div>${labels[i]}: <span id="${key}-value">${params[key].toFixed(2)}</span></div>`
+    `<div>${labels[i]}: <span id="${key}-value">${getDisplayValue(el, key, params[key])}</span></div>`
   ).join('');
 }
 

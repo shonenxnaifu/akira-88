@@ -12,7 +12,7 @@ export const appState = {
   },
   randomizeMode: false,
   parameters: {
-    bass: { pitch: 0, filter: 0, resonance: 0 },
+    bass: { delay: 0, filter: 0, resonance: 0 },
     synth: { detune: 0, filter: 0, lfoRate: 0 },
     drum: { decay: 0, velocity: 0, noiseFilter: 0 }
   },
