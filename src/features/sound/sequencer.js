@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import { getBassSynth } from "./instruments/bass-acid-psychedelic.js";
+import { getBassSynth } from "./instruments/bass.js";
 import { getSynth } from "./instruments/synth.js";
 import { triggerDrum } from "./instruments/drum.js";
 
