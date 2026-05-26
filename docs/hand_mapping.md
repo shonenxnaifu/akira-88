@@ -81,7 +81,22 @@ landmarks = [
 |---|---|---|
 | **x** | `0.0` → `1.0` | Horizontal position (0 = left edge, 1 = right edge) |
 | **y** | `0.0` → `1.0` | Vertical position (0 = top edge, 1 = bottom edge) |
-| **z** | Relative depth | Distance from wrist plane (negative = closer to camera, positive = farther) |
+| **z** | Relative depth | Depth relative to wrist (landmark 0). **Smaller z = closer to camera. Larger z = farther from camera.** |
+
+### Z-Coordinate Explained (Wrist as Reference)
+
+The wrist landmark (0) serves as the **origin/reference plane** for depth:
+
+```js
+// Wrist is always ≈ 0 (the reference point)
+landmarks[0] = { x: 0.5, y: 0.5, z: 0.001 }  // z ≈ 0
+
+// Other landmarks are relative to wrist:
+landmarks[8]  = { x: 0.4, y: 0.3, z: -0.05 } // Index tip = CLOSER to camera than wrist
+landmarks[12] = { x: 0.5, y: 0.2, z: +0.03 } // Middle tip = FARTHER from camera than wrist
+```
+
+**Key rule:** Compare z values directly — the smaller value is always closer to the camera.
 
 ### Coordinate Axes Visualization
 
@@ -96,8 +111,9 @@ x=0 ←──┼──→ x=1 (right of frame)
    y=1 (bottom of frame)
 
 z-axis: depth (perpendicular to screen)
-  z < 0 → landmark is CLOSER to camera than wrist
-  z > 0 → landmark is FARTHER from camera than wrist
+  Smaller z → landmark is CLOSER to camera
+  Larger z  → landmark is FARTHER from camera
+  z ≈ 0     → landmark is at same depth as wrist (reference plane)
 ```
 
 ### Practical Examples
@@ -107,7 +123,7 @@ z-axis: depth (perpendicular to screen)
 | Index fingertip horizontal position | `landmarks[8].x` | `0.5` = center, `0.2` = left side |
 | Index fingertip vertical position | `landmarks[8].y` | `0.1` = near top, `0.9` = near bottom |
 | Is index finger extended? | `landmarks[8].y < landmarks[6].y` | Tip is above PIP joint (remember: y=0 is top) |
-| Is palm facing camera? | `landmarks[0].z > landmarks[9].z` | Wrist is closer than middle finger base |
+| Is palm facing camera? | `landmarks[0].z > landmarks[9].z` | Knuckles (landmark 9) are closer to camera than wrist (landmark 0). Smaller z = closer, so `middleMcp.z < wrist.z` means palm faces camera. |
 | Hand rotation angle | `Math.atan2(landmarks[8].y - landmarks[5].y, landmarks[8].x - landmarks[5].x)` | Direction from index base to tip |
 
 ### Mirror Flip (Important for Your App)
@@ -129,7 +145,7 @@ const screenY = landmark.y * app.screen.height;
 | Finger extension | `tip.y < pip.y` for index/middle/ring/pinky | `gesture/hooks.js` |
 | Thumb extension | Distance comparison: `tip-to-mcp vs ip-to-mcp` | `gesture/hooks.js` |
 | Hand rotation | `atan2(tip.y - mcp.y, tip.x - mcp.x)` using landmarks 5 and 8 | `gesture/hooks.js` |
-| Palm detection | `wrist.z > middleMcp.z` (landmarks 0 and 9) | `gesture/hooks.js` |
+| Palm detection | `wrist.z > middleMcp.z` (landmarks 0 and 9). When palm faces camera, knuckles are closer (smaller z) than wrist. | `gesture/hooks.js` |
 | Hand distance | Euclidean distance between centroids of all 21 landmarks | `gesture/hooks.js` |
 | Animation tracking | 6 key joints: `[0, 1, 5, 9, 13, 17]` | `animation/tracking.js` |
 | Effect positioning | Convert normalized to screen coords with mirror flip | `animation/renderer.js` |
