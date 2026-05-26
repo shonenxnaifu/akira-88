@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="600" height="700">
+  <defs>
+    <style>
+      .label { font-family: monospace; font-size: 11px; fill: #E8D5B7; }
+      .finger-label { font-family: sans-serif; font-size: 13px; font-weight: bold; }
+      .title { font-family: sans-serif; font-size: 18px; font-weight: bold; fill: #E8D5B7; }
+      .wrist { font-family: sans-serif; font-size: 14px; font-weight: bold; fill: #E8D5B7; }
+      .thumb { fill: #FF6B35; stroke: #FF6B35; }
+      .index { fill: #B849E8; stroke: #B849E8; }
+      .middle { fill: #49C8E8; stroke: #49C8E8; }
+      .ring { fill: #E8C849; stroke: #E8C849; }
+      .pinky { fill: #49E86B; stroke: #49E86B; }
+      .wrist-dot { fill: #FFFFFF; stroke: #FFFFFF; }
+      .skeleton { stroke: #DB69D2; stroke-width: 2; fill: none; opacity: 0.7; }
+      .bg { fill: #1A1A2E; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="600" height="700" rx="12"/>
+
+  <!-- Title -->
+  <text class="title" x="300" y="35" text-anchor="middle">MediaPipe Hand Landmarks (21 Points)</text>
+
+  <!-- Skeleton Lines -->
+  <g class="skeleton">
+    <!-- Thumb -->
+    <line x1="220" y1="520" x2="160" y2="440"/>
+    <line x1="160" y1="440" x2="130" y2="380"/>
+    <line x1="130" y1="380" x2="110" y2="320"/>
+    <line x1="110" y1="320" x2="95" y2="260"/>
+    <!-- Index -->
+    <line x1="260" y1="420" x2="250" y2="340"/>
+    <line x1="250" y1="340" x2="245" y2="260"/>
+    <line x1="245" y1="260" x2="240" y2="180"/>
+    <line x1="240" y1="180" x2="235" y2="100"/>
+    <!-- Middle -->
+    <line x1="300" y1="420" x2="300" y2="340"/>
+    <line x1="300" y1="340" x2="300" y2="260"/>
+    <line x1="300" y1="260" x2="300" y2="180"/>
+    <line x1="300" y1="180" x2="300" y2="80"/>
+    <!-- Ring -->
+    <line x1="340" y1="420" x2="350" y2="340"/>
+    <line x1="350" y1="340" x2="355" y2="260"/>
+    <line x1="355" y1="260" x2="360" y2="180"/>
+    <line x1="360" y1="180" x2="365" y2="100"/>
+    <!-- Pinky -->
+    <line x1="380" y1="420" x2="410" y2="360"/>
+    <line x1="410" y1="360" x2="420" y2="300"/>
+    <line x1="420" y1="300" x2="430" y2="240"/>
+    <line x1="430" y1="240" x2="440" y2="180"/>
+    <!-- Palm connections -->
+    <line x1="260" y1="420" x2="300" y2="420"/>
+    <line x1="300" y1="420" x2="340" y2="420"/>
+    <line x1="340" y1="420" x2="380" y2="420"/>
+    <line x1="220" y1="520" x2="260" y2="420"/>
+    <line x1="380" y1="420" x2="220" y2="520"/>
+  </g>
+
+  <!-- Wrist -->
+  <circle class="wrist-dot" cx="220" cy="520" r="8"/>
+  <text class="wrist" x="220" y="555" text-anchor="middle">0</text>
+  <text class="wrist" x="220" y="575" text-anchor="middle">WRIST</text>
+
+  <!-- Thumb (Orange) -->
+  <circle class="thumb" cx="160" cy="440" r="6"/>
+  <text class="label" x="140" y="465" text-anchor="middle">1</text>
+  <circle class="thumb" cx="130" cy="380" r="6"/>
+  <text class="label" x="110" y="405" text-anchor="middle">2</text>
+  <circle class="thumb" cx="110" cy="320" r="6"/>
+  <text class="label" x="90" y="345" text-anchor="middle">3</text>
+  <circle class="thumb" cx="95" cy="260" r="8"/>
+  <text class="label" x="75" y="285" text-anchor="middle">4</text>
+  <text class="finger-label" fill="#FF6B35" x="100" y="240" text-anchor="middle">THUMB</text>
+
+  <!-- Index (Purple) -->
+  <circle class="index" cx="260" cy="420" r="6"/>
+  <text class="label" x="280" y="445" text-anchor="middle">5</text>
+  <circle class="index" cx="250" cy="340" r="6"/>
+  <text class="label" x="270" y="365" text-anchor="middle">6</text>
+  <circle class="index" cx="245" cy="260" r="6"/>
+  <text class="label" x="265" y="285" text-anchor="middle">7</text>
+  <circle class="index" cx="240" cy="180" r="6"/>
+  <text class="label" x="260" y="205" text-anchor="middle">8</text>
+  <circle class="index" cx="235" cy="100" r="8"/>
+  <text class="label" x="255" y="125" text-anchor="middle">8</text>
+  <text class="finger-label" fill="#B849E8" x="240" y="75" text-anchor="middle">INDEX</text>
+
+  <!-- Middle (Cyan) -->
+  <circle class="middle" cx="300" cy="420" r="6"/>
+  <text class="label" x="320" y="445" text-anchor="middle">9</text>
+  <circle class="middle" cx="300" cy="340" r="6"/>
+  <text class="label" x="320" y="365" text-anchor="middle">10</text>
+  <circle class="middle" cx="300" cy="260" r="6"/>
+  <text class="label" x="320" y="285" text-anchor="middle">11</text>
+  <circle class="middle" cx="300" cy="180" r="6"/>
+  <text class="label" x="320" y="205" text-anchor="middle">12</text>
+  <circle class="middle" cx="300" cy="80" r="8"/>
+  <text class="label" x="320" y="105" text-anchor="middle">12</text>
+  <text class="finger-label" fill="#49C8E8" x="300" y="55" text-anchor="middle">MIDDLE</text>
+
+  <!-- Ring (Gold) -->
+  <circle class="ring" cx="340" cy="420" r="6"/>
+  <text class="label" x="360" y="445" text-anchor="middle">13</text>
+  <circle class="ring" cx="350" cy="340" r="6"/>
+  <text class="label" x="370" y="365" text-anchor="middle">14</text>
+  <circle class="ring" cx="355" cy="260" r="6"/>
+  <text class="label" x="375" y="285" text-anchor="middle">15</text>
+  <circle class="ring" cx="360" cy="180" r="6"/>
+  <text class="label" x="380" y="205" text-anchor="middle">16</text>
+  <circle class="ring" cx="365" cy="100" r="8"/>
+  <text class="label" x="385" y="125" text-anchor="middle">16</text>
+  <text class="finger-label" fill="#E8C849" x="365" y="75" text-anchor="middle">RING</text>
+
+  <!-- Pinky (Green) -->
+  <circle class="pinky" cx="380" cy="420" r="6"/>
+  <text class="label" x="400" y="445" text-anchor="middle">17</text>
+  <circle class="pinky" cx="410" cy="360" r="6"/>
+  <text class="label" x="430" y="385" text-anchor="middle">18</text>
+  <circle class="pinky" cx="420" cy="300" r="6"/>
+  <text class="label" x="440" y="325" text-anchor="middle">19</text>
+  <circle class="pinky" cx="430" cy="240" r="6"/>
+  <text class="label" x="450" y="265" text-anchor="middle">20</text>
+  <circle class="pinky" cx="440" cy="180" r="8"/>
+  <text class="label" x="460" y="205" text-anchor="middle">20</text>
+  <text class="finger-label" fill="#49E86B" x="450" y="155" text-anchor="middle">PINKY</text>
+
+  <!-- Legend -->
+  <rect x="30" y="600" width="540" height="80" rx="8" fill="#16213E" stroke="#DB69D2" stroke-width="1"/>
+  <text class="title" x="300" y="625" text-anchor="middle" font-size="14">Legend</text>
+
+  <circle fill="#FF6B35" cx="80" cy="650" r="5"/>
+  <text class="label" x="95" y="654">Thumb (1-4)</text>
+
+  <circle fill="#B849E8" cx="200" cy="650" r="5"/>
+  <text class="label" x="215" y="654">Index (5-8)</text>
+
+  <circle fill="#49C8E8" cx="320" cy="650" r="5"/>
+  <text class="label" x="335" y="654">Middle (9-12)</text>
+
+  <circle fill="#E8C849" cx="440" cy="650" r="5"/>
+  <text class="label" x="455" y="654">Ring (13-16)</text>
+
+  <circle fill="#49E86B" cx="520" cy="650" r="5"/>
+  <text class="label" x="535" y="654">Pinky (17-20)</text>
+</svg>
