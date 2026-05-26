@@ -126,21 +126,21 @@
   <text class="finger-label" fill="#49E86B" x="450" y="155" text-anchor="middle">PINKY</text>
 
   <!-- Legend -->
-  <rect x="30" y="600" width="540" height="80" rx="8" fill="#16213E" stroke="#DB69D2" stroke-width="1"/>
+  <rect x="20" y="600" width="560" height="80" rx="8" fill="#16213E" stroke="#DB69D2" stroke-width="1"/>
   <text class="title" x="300" y="625" text-anchor="middle" font-size="14">Legend</text>
 
   <circle fill="#FF6B35" cx="80" cy="650" r="5"/>
-  <text class="label" x="95" y="654">Thumb (1-4)</text>
+  <text class="label" x="80" y="654" text-anchor="middle">Thumb (1-4)</text>
 
-  <circle fill="#B849E8" cx="200" cy="650" r="5"/>
-  <text class="label" x="215" y="654">Index (5-8)</text>
+  <circle fill="#B849E8" cx="190" cy="650" r="5"/>
+  <text class="label" x="190" y="654" text-anchor="middle">Index (5-8)</text>
 
-  <circle fill="#49C8E8" cx="320" cy="650" r="5"/>
-  <text class="label" x="335" y="654">Middle (9-12)</text>
+  <circle fill="#49C8E8" cx="300" cy="650" r="5"/>
+  <text class="label" x="300" y="654" text-anchor="middle">Middle (9-12)</text>
 
-  <circle fill="#E8C849" cx="440" cy="650" r="5"/>
-  <text class="label" x="455" y="654">Ring (13-16)</text>
+  <circle fill="#E8C849" cx="410" cy="650" r="5"/>
+  <text class="label" x="410" y="654" text-anchor="middle">Ring (13-16)</text>
 
   <circle fill="#49E86B" cx="520" cy="650" r="5"/>
-  <text class="label" x="535" y="654">Pinky (17-20)</text>
+  <text class="label" x="520" y="654" text-anchor="middle">Pinky (17-20)</text>
 </svg>
