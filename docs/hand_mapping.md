@@ -57,3 +57,92 @@
 ## SVG Visual Diagram
 
 ![Hand Landmarks Diagram](hand_landmarks.svg)
+
+---
+
+## Coordinate System Deep Dive
+
+### Per-Landmark Coordinates
+
+Each of the 21 landmarks has its **own** `{x, y, z}` coordinate object:
+
+```js
+landmarks = [
+  { x: 0.5, y: 0.8, z: -0.02 },   // landmark 0 (WRIST)
+  { x: 0.48, y: 0.75, z: -0.01 }, // landmark 1 (Thumb CMC)
+  { x: 0.46, y: 0.70, z: 0.01 },  // landmark 2 (Thumb MCP)
+  // ... all the way to landmark 20
+]
+```
+
+### Value Ranges
+
+| Coordinate | Range | Meaning |
+|---|---|---|
+| **x** | `0.0` → `1.0` | Horizontal position (0 = left edge, 1 = right edge) |
+| **y** | `0.0` → `1.0` | Vertical position (0 = top edge, 1 = bottom edge) |
+| **z** | Relative depth | Distance from wrist plane (negative = closer to camera, positive = farther) |
+
+### Coordinate Axes Visualization
+
+```
+     y=0 (top of frame)
+       ↑
+       │
+x=0 ←──┼──→ x=1 (right of frame)
+(left) │
+       │
+       ↓
+   y=1 (bottom of frame)
+
+z-axis: depth (perpendicular to screen)
+  z < 0 → landmark is CLOSER to camera than wrist
+  z > 0 → landmark is FARTHER from camera than wrist
+```
+
+### Practical Examples
+
+| What you want to check | Code | Explanation |
+|---|---|---|
+| Index fingertip horizontal position | `landmarks[8].x` | `0.5` = center, `0.2` = left side |
+| Index fingertip vertical position | `landmarks[8].y` | `0.1` = near top, `0.9` = near bottom |
+| Is index finger extended? | `landmarks[8].y < landmarks[6].y` | Tip is above PIP joint (remember: y=0 is top) |
+| Is palm facing camera? | `landmarks[0].z > landmarks[9].z` | Wrist is closer than middle finger base |
+| Hand rotation angle | `Math.atan2(landmarks[8].y - landmarks[5].y, landmarks[8].x - landmarks[5].x)` | Direction from index base to tip |
+
+### Mirror Flip (Important for Your App)
+
+Since your app mirrors the video feed, you must flip the x-coordinate when converting to screen position:
+
+```js
+// In renderer.js and tracking.js
+const screenX = (1 - landmark.x) * app.screen.width;
+const screenY = landmark.y * app.screen.height;
+```
+
+**Why?** MediaPipe gives `x=0.2` for the left side of the frame, but your mirrored video shows the opposite. So `1 - 0.2 = 0.8` gives the correct mirrored screen position.
+
+### How Your App Uses Coordinates
+
+| Feature | Coordinates Used | File |
+|---|---|---|
+| Finger extension | `tip.y < pip.y` for index/middle/ring/pinky | `gesture/hooks.js` |
+| Thumb extension | Distance comparison: `tip-to-mcp vs ip-to-mcp` | `gesture/hooks.js` |
+| Hand rotation | `atan2(tip.y - mcp.y, tip.x - mcp.x)` using landmarks 5 and 8 | `gesture/hooks.js` |
+| Palm detection | `wrist.z > middleMcp.z` (landmarks 0 and 9) | `gesture/hooks.js` |
+| Hand distance | Euclidean distance between centroids of all 21 landmarks | `gesture/hooks.js` |
+| Animation tracking | 6 key joints: `[0, 1, 5, 9, 13, 17]` | `animation/tracking.js` |
+| Effect positioning | Convert normalized to screen coords with mirror flip | `animation/renderer.js` |
+
+### Coordinate Value Differences by Scenario
+
+| Scenario | Typical x | Typical y | Typical z |
+|---|---|---|---|
+| Hand on left side of frame | `0.1` – `0.4` | `0.3` – `0.7` | Varies |
+| Hand on right side of frame | `0.6` – `0.9` | `0.3` – `0.7` | Varies |
+| Hand near top of frame | `0.3` – `0.7` | `0.1` – `0.3` | Varies |
+| Hand near bottom of frame | `0.3` – `0.7` | `0.7` – `0.9` | Varies |
+| Fingertip closer than wrist | Same as hand | Same as hand | `-0.05` to `-0.01` |
+| Fingertip farther than wrist | Same as hand | Same as hand | `0.01` to `0.05` |
+| Palm flat facing camera | Centered | Centered | All landmarks similar z |
+| Hand rotated sideways | Shifted | Shifted | Thumb and pinky z differ significantly |
