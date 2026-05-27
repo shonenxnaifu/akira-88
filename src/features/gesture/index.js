@@ -1,5 +1,5 @@
 import { initDetector } from './detector.js';
-import { countExtendedFingers, countFourFingers, isFingerExtended, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance } from './hooks.js';
+import { countExtendedFingers, countFourFingers, isFingerExtended, getHandedness, getHandCentroid, calculateHandRotation, calculateZTilt, calculateHandDistance } from './hooks.js';
 import { recognizeGesture } from './gestures.js';
 import { drawHandLandmarks, clearHandLandmarks } from '../animation/renderer.js';
 
@@ -192,5 +192,5 @@ export function getLastResults() {
   return lastResults;
 }
 
-export { countExtendedFingers, countFourFingers, isFingerExtended, getHandedness, getHandCentroid, calculateHandRotation, calculateHandDistance };
+export { countExtendedFingers, countFourFingers, isFingerExtended, getHandedness, getHandCentroid, calculateHandRotation, calculateZTilt, calculateHandDistance };
 export { recognizeGesture } from './gestures.js';

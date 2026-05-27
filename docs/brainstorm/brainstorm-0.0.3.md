@@ -46,7 +46,8 @@ A real-time web app that allows users to create and modify techno tracks using h
 - To select another element, must exit edit state first
 - Randomize mode only works when an element is selected and active/playing
 - Randomize mode takes priority over other gestures when active
-- Hand rotation calculated using wrist → index finger base → index finger tip angle
+- Randomize mode rotation uses z-tilt (Y-Z plane, middle finger tip, ±60° max) for crystal ball pose sensitivity
+- Element selection uses x-y plane rotation (index finger, camera view) for hand angle tracking
 - Volume control is manual via UI sliders (not gesture-based)
 - Hold progress shows countdown: `"🔒 Holding Select Bass... 1.5s / 3.0s"`
 - Hold timer resets immediately if gesture is lost or changes (no grace period)
@@ -64,9 +65,16 @@ Parameters are instrument-specific, mapped to hand gestures:
 | **Drum** | Decay (sustain length) | Velocity (0.5-1.0 hit intensity) | Noise Filter (texture brightness) |
 
 **Mapping:**
-- Left hand rotation → Param 1 (mapped -1 to 1)
+- Left hand z-tilt → Param 1 (mapped -1 to 1, normalized by MAX_Z_TILT = 60°)
 - Distance between hands → Param 2 (mapped 0 to 1, range 0.1-0.6)
-- Right hand rotation → Param 3 (mapped -1 to 1)
+- Right hand z-tilt → Param 3 (mapped -1 to 1, normalized by MAX_Z_TILT = 60°)
+
+**Z-Tilt Rotation:**
+- Uses `atan2(dz, dy)` in the Y-Z plane (depth vs vertical) instead of x-y plane
+- Measures tilt from vertical (straight up = 0°) toward/away from camera (±60° max)
+- Uses middle finger tip (landmark 12) for stability — less wobble than index finger
+- Clamped to ±60° (`MAX_Z_TILT = Math.PI / 3`) to prevent extreme values
+- Replaces x-y rotation for randomize mode because crystal ball pose has fingers pointing mostly up, making x-y rotation insensitive to small tilts
 
 ---
 
@@ -138,7 +146,7 @@ Each element has unique electrical effect between hands during randomize mode:
 - **Audio context**: Play button on page load to unlock audio (browser policy)
 - **MediaPipe settings**: modelComplexity: 1, maxNumHands: 2, 30fps detection
 - **Synchronization**: Tone.Transport as master clock, PixiJS animation loop synced to audio
-- **Hand rotation detection**: Angle between wrist → index finger base → index finger tip
+- **Hand rotation detection**: Two methods — x-y plane (`atan2(dy, dx)`, index finger) for angle tracking; z-tilt (`atan2(dz, dy)`, middle finger tip, ±60°) for randomize mode parameter control
 - **Element selection**: Uses `countFourFingers()` (excludes thumb) for reliable detection
 - **Volume**: Manual UI sliders only, no gesture-based volume control
 - **Gesture debouncing**: 500ms between same gesture triggers; randomize mode exempt for continuous updates
@@ -255,5 +263,15 @@ Each element has unique electrical effect between hands during randomize mode:
 
 ### Technical Additions
 - Hand rotation detection method: wrist → index base → index tip angle
-- Parameter limits added to prevent extreme sounds
-- Continuous vs discrete randomization clarified
+
+---
+
+## Changelog (v0.0.3 → v0.0.4)
+
+### Rotation System
+- **Randomize mode now uses z-tilt rotation** instead of x-y plane rotation for Param 1 and Param 3
+- **New function**: `calculateZTilt(landmarks)` in `gesture/hooks.js` — uses `atan2(dz, dy)` with middle finger tip (landmark 12)
+- **New constant**: `MAX_Z_TILT: Math.PI / 3` (60°) in `GESTURE_CONFIG`
+- **Why z-tilt**: Crystal ball pose has fingers pointing mostly up (along y-axis), so small tilts barely change x-y coordinates → x-y rotation was insensitive. Z-tilt measures depth change (z) vs vertical (y), giving much better sensitivity for this pose
+- **Normalization**: Z-tilt angle clamped to ±60°, then divided by `MAX_Z_TILT` to produce universal `[-1, 1]` control signal
+- **`calculateHandRotation()` unchanged** — still used for `handAngles` tracking and element selection context

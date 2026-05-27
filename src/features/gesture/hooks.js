@@ -1,3 +1,7 @@
+import { GESTURE_CONFIG } from '../../core/constants.js';
+
+const { MAX_Z_TILT } = GESTURE_CONFIG;
+
 const FINGER_NAMES = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
 const LANDMARK_INDICES = {
@@ -65,6 +69,15 @@ export function calculateHandRotation(landmarks) {
   const indexMcp = landmarks[5];
   const indexTip = landmarks[8];
   return Math.atan2(indexTip.y - indexMcp.y, indexTip.x - indexMcp.x);
+}
+
+export function calculateZTilt(landmarks) {
+  const wrist = landmarks[0];
+  const middleTip = landmarks[12];
+  const dy = wrist.y - middleTip.y;
+  const dz = middleTip.z - wrist.z;
+  const rawAngle = Math.atan2(dz, dy);
+  return Math.max(-MAX_Z_TILT, Math.min(MAX_Z_TILT, rawAngle));
 }
 
 export function calculateHandDistance(landmarks1, landmarks2) {

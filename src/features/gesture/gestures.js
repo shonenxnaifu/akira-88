@@ -1,7 +1,7 @@
-import { countExtendedFingers, countFourFingers, isFingerExtended, calculateHandRotation, calculateHandDistance, isPalmFacingCamera } from './hooks.js';
+import { countExtendedFingers, countFourFingers, isFingerExtended, calculateZTilt, calculateHandDistance, isPalmFacingCamera } from './hooks.js';
+import { GESTURE_CONFIG } from '../../core/constants.js';
 
-const RANDOMIZE_DISTANCE_MIN = 0.1;
-const RANDOMIZE_DISTANCE_MAX = 0.6;
+const { RANDOMIZE_DISTANCE_MIN, RANDOMIZE_DISTANCE_MAX, MAX_Z_TILT } = GESTURE_CONFIG;
 
 export function detectElementSelection(hand, handedness) {
   if (handedness !== 'Right') return null;
@@ -58,13 +58,13 @@ export function detectRandomizeMode(leftHand, rightHand) {
 }
 
 export function calculateRandomizeParams(leftHand, rightHand) {
-  const leftRotation = calculateHandRotation(leftHand);
-  const rightRotation = calculateHandRotation(rightHand);
+  const leftRotation = calculateZTilt(leftHand);
+  const rightRotation = calculateZTilt(rightHand);
   const handDistance = calculateHandDistance(leftHand, rightHand);
 
-  const param1 = Math.max(-1, Math.min(1, leftRotation / Math.PI));
+  const param1 = Math.max(-1, Math.min(1, leftRotation / MAX_Z_TILT));
   const param2 = Math.max(0, Math.min(1, (handDistance - RANDOMIZE_DISTANCE_MIN) / (RANDOMIZE_DISTANCE_MAX - RANDOMIZE_DISTANCE_MIN)));
-  const param3 = Math.max(-1, Math.min(1, rightRotation / Math.PI));
+  const param3 = Math.max(-1, Math.min(1, rightRotation / MAX_Z_TILT));
 
   return {
     bass: { delay: param1, filter: param2, resonance: param3 },
