@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000" width="1400" height="1000">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrowheadOrange" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#FF6B35"/>
+    </marker>
+    <marker id="arrowheadGold" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#FFD700"/>
+    </marker>
+    <marker id="arrowheadPurple" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#B849E8"/>
+    </marker>
+    <marker id="arrowheadWhite" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#E8D5B7"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="1000" fill="#1A1A2E" rx="12"/>
+
+  <!-- Title -->
+  <text x="700" y="40" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="22" font-weight="bold">Z-Tilt Rotation: Y-Z Plane Geometry — atan2(dz, dy)</text>
+  <line x1="80" y1="55" x2="1320" y2="55" stroke="#FF6B35" stroke-width="1" opacity="0.5"/>
+
+  <!-- ============================================ -->
+  <!-- MAIN GRAPH: Y-Z Plane (left side)            -->
+  <!-- ============================================ -->
+  <g transform="translate(450, 680)">
+    <!-- Z-axis (horizontal, positive right = farther from camera) -->
+    <line x1="-250" y1="0" x2="250" y2="0" stroke="#E8D5B7" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+    <text x="260" y="4" fill="#E8D5B7" font-family="monospace" font-size="14" font-weight="bold">Z (depth)</text>
+
+    <!-- Y-axis (vertical, positive up = tip above wrist) -->
+    <line x1="0" y1="0" x2="0" y2="-400" stroke="#E8D5B7" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+    <text x="8" y="-410" fill="#E8D5B7" font-family="monospace" font-size="14" font-weight="bold">Y (vertical)</text>
+
+    <!-- Origin label -->
+    <circle cx="0" cy="0" r="5" fill="#E8D5B7"/>
+    <text x="0" y="22" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="12" font-weight="bold">wrist</text>
+
+    <!-- Grid lines (subtle) -->
+    <line x1="-150" y1="-100" x2="150" y2="-100" stroke="#E8D5B7" stroke-width="0.3" opacity="0.15"/>
+    <line x1="-150" y1="-200" x2="150" y2="-200" stroke="#E8D5B7" stroke-width="0.3" opacity="0.15"/>
+    <line x1="-150" y1="-300" x2="150" y2="-300" stroke="#E8D5B7" stroke-width="0.3" opacity="0.15"/>
+    <line x1="-100" y1="0" x2="-100" y2="-400" stroke="#E8D5B7" stroke-width="0.3" opacity="0.15"/>
+    <line x1="100" y1="0" x2="100" y2="-400" stroke="#E8D5B7" stroke-width="0.3" opacity="0.15"/>
+
+    <!-- Clamping boundaries at ±60° (dashed) -->
+    <line x1="0" y1="0" x2="-289" y2="-167" stroke="#FF6B35" stroke-width="1" stroke-dasharray="6,4" opacity="0.3"/>
+    <text x="-300" y="-180" text-anchor="end" fill="#FF6B35" font-family="monospace" font-size="11" opacity="0.5">-60° clamp</text>
+
+    <line x1="0" y1="0" x2="289" y2="-167" stroke="#B849E8" stroke-width="1" stroke-dasharray="6,4" opacity="0.3"/>
+    <text x="300" y="-180" text-anchor="start" fill="#B849E8" font-family="monospace" font-size="11" opacity="0.5">+60° clamp</text>
+
+    <!-- Clamping zone shading between ±60° -->
+    <path d="M 0 0 L -289 -167 A 334 334 0 0 1 289 -167 Z" fill="#FF6B35" opacity="0.04"/>
+
+    <!-- ============================================ -->
+    <!-- VECTOR 1: -60° (tilt toward camera)          -->
+    <!-- ============================================ -->
+    <line x1="0" y1="0" x2="-289" y2="-167" stroke="#FF6B35" stroke-width="3" marker-end="url(#arrowheadOrange)"/>
+    <circle cx="-289" cy="-167" r="5" fill="#FF6B35" filter="url(#glow)"/>
+    <text x="-305" y="-185" text-anchor="end" fill="#FF6B35" font-family="monospace" font-size="13" font-weight="bold">-60°</text>
+    <text x="-305" y="-170" text-anchor="end" fill="#FF6B35" font-family="monospace" font-size="11">toward camera</text>
+    <text x="-305" y="-155" text-anchor="end" fill="#888" font-family="monospace" font-size="10">dz = -0.08</text>
+
+    <!-- ============================================ -->
+    <!-- VECTOR 2: 0° (straight up)                   -->
+    <!-- ============================================ -->
+    <line x1="0" y1="0" x2="0" y2="-350" stroke="#FFD700" stroke-width="3" marker-end="url(#arrowheadGold)"/>
+    <circle cx="0" cy="-350" r="5" fill="#FFD700" filter="url(#glow)"/>
+    <text x="15" y="-360" fill="#FFD700" font-family="monospace" font-size="13" font-weight="bold">0°</text>
+    <text x="15" y="-345" fill="#FFD700" font-family="monospace" font-size="11">straight up</text>
+    <text x="15" y="-330" fill="#888" font-family="monospace" font-size="10">dz ≈ 0</text>
+
+    <!-- ============================================ -->
+    <!-- VECTOR 3: +60° (tilt away from camera)       -->
+    <!-- ============================================ -->
+    <line x1="0" y1="0" x2="289" y2="-167" stroke="#B849E8" stroke-width="3" marker-end="url(#arrowheadPurple)"/>
+    <circle cx="289" cy="-167" r="5" fill="#B849E8" filter="url(#glow)"/>
+    <text x="305" y="-185" text-anchor="start" fill="#B849E8" font-family="monospace" font-size="13" font-weight="bold">+60°</text>
+    <text x="305" y="-170" text-anchor="start" fill="#B849E8" font-family="monospace" font-size="11">away from camera</text>
+    <text x="305" y="-155" text-anchor="start" fill="#888" font-family="monospace" font-size="10">dz = +0.06</text>
+
+    <!-- ============================================ -->
+    <!-- ANGLE ARCS                                   -->
+    <!-- ============================================ -->
+    <path d="M 0 -70 A 70 70 0 0 0 -60.6 -35" fill="none" stroke="#FF6B35" stroke-width="2"/>
+    <text x="-40" y="-48" text-anchor="middle" fill="#FF6B35" font-family="monospace" font-size="10" font-weight="bold">-60°</text>
+
+    <path d="M 0 -70 A 70 70 0 0 1 60.6 -35" fill="none" stroke="#B849E8" stroke-width="2"/>
+    <text x="40" y="-48" text-anchor="middle" fill="#B849E8" font-family="monospace" font-size="10" font-weight="bold">+60°</text>
+
+    <!-- Axis direction labels -->
+    <text x="-220" y="-10" text-anchor="middle" fill="#888" font-family="monospace" font-size="10">Z &lt; 0</text>
+    <text x="220" y="-10" text-anchor="middle" fill="#888" font-family="monospace" font-size="10">Z &gt; 0</text>
+    <text x="12" y="-385" fill="#888" font-family="monospace" font-size="10">Y &gt; 0</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- LEFT PANEL: Hand Reference                   -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 80)">
+    <rect x="0" y="0" width="280" height="220" rx="10" fill="#16213E" stroke="#E8D5B7" stroke-width="1"/>
+    <text x="140" y="28" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="14" font-weight="bold">HAND REFERENCE</text>
+    <line x1="20" y1="38" x2="260" y2="38" stroke="#E8D5B7" stroke-width="0.5" opacity="0.3"/>
+
+    <text x="140" y="55" text-anchor="middle" fill="#888" font-family="monospace" font-size="10">side profile (camera view)</text>
+
+    <!-- Wrist -->
+    <rect x="120" y="185" width="40" height="15" rx="5" fill="#E8D5B7" opacity="0.6"/>
+    <text x="140" y="212" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="10">wrist</text>
+
+    <!-- Palm -->
+    <rect x="115" y="135" width="50" height="50" rx="5" fill="#E8D5B7" opacity="0.4"/>
+
+    <!-- Fingers (middle finger highlighted) -->
+    <rect x="130" y="70" width="20" height="65" rx="5" fill="#FF6B35" opacity="0.8"/>
+    <text x="140" y="65" text-anchor="middle" fill="#FF6B35" font-family="monospace" font-size="9">middle tip</text>
+
+    <!-- Other fingers (dimmed) -->
+    <rect x="105" y="85" width="15" height="50" rx="4" fill="#E8D5B7" opacity="0.2"/>
+    <rect x="155" y="90" width="15" height="45" rx="4" fill="#E8D5B7" opacity="0.2"/>
+    <rect x="175" y="100" width="12" height="35" rx="4" fill="#E8D5B7" opacity="0.2"/>
+
+    <!-- Thumb -->
+    <rect x="95" y="145" width="20" height="30" rx="5" fill="#E8D5B7" opacity="0.2"/>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- LEFT PANEL: Landmarks Used                   -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 330)">
+    <rect x="0" y="0" width="280" height="140" rx="10" fill="#16213E" stroke="#E8D5B7" stroke-width="1"/>
+    <text x="140" y="28" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="14" font-weight="bold">LANDMARKS USED</text>
+    <line x1="20" y1="38" x2="260" y2="38" stroke="#E8D5B7" stroke-width="0.5" opacity="0.3"/>
+
+    <text x="20" y="65" fill="#FF6B35" font-family="monospace" font-size="13">wrist = landmarks[0]</text>
+    <text x="20" y="90" fill="#FF6B35" font-family="monospace" font-size="13">middle tip = landmarks[12]</text>
+    <text x="20" y="115" fill="#888" font-family="monospace" font-size="11">Why middle finger? More stable,</text>
+    <text x="20" y="130" fill="#888" font-family="monospace" font-size="11">centered, less wobble than index</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- RIGHT PANEL: Formula                         -->
+  <!-- ============================================ -->
+  <g transform="translate(850, 80)">
+    <rect x="0" y="0" width="520" height="200" rx="10" fill="#16213E" stroke="#FF6B35" stroke-width="1.5"/>
+    <text x="260" y="30" text-anchor="middle" fill="#FF6B35" font-family="monospace" font-size="15" font-weight="bold">FORMULA</text>
+    <line x1="30" y1="42" x2="490" y2="42" stroke="#FF6B35" stroke-width="0.5" opacity="0.3"/>
+
+    <text x="30" y="72" fill="#E8D5B7" font-family="monospace" font-size="14">dy = wrist.y - middleTip.y</text>
+    <text x="30" y="96" fill="#E8D5B7" font-family="monospace" font-size="14">dz = middleTip.z - wrist.z</text>
+    <text x="30" y="130" fill="#FFD700" font-family="monospace" font-size="15" font-weight="bold">angle = atan2(dz, dy)</text>
+    <text x="30" y="162" fill="#E8D5B7" font-family="monospace" font-size="13">clamped = max(-π/3, min(π/3, angle))</text>
+    <text x="30" y="185" fill="#888" font-family="monospace" font-size="12">π/3 = 60° ≈ 1.047 rad</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- RIGHT PANEL: Hand Positions Table            -->
+  <!-- ============================================ -->
+  <g transform="translate(850, 310)">
+    <rect x="0" y="0" width="520" height="220" rx="10" fill="#16213E" stroke="#E8D5B7" stroke-width="1"/>
+    <text x="260" y="28" text-anchor="middle" fill="#E8D5B7" font-family="monospace" font-size="15" font-weight="bold">HAND POSITIONS</text>
+    <line x1="30" y1="40" x2="490" y2="40" stroke="#E8D5B7" stroke-width="0.5" opacity="0.3"/>
+
+    <!-- Table header -->
+    <text x="30" y="62" fill="#888" font-family="monospace" font-size="12">Angle</text>
+    <text x="130" y="62" fill="#888" font-family="monospace" font-size="12">dy</text>
+    <text x="230" y="62" fill="#888" font-family="monospace" font-size="12">dz</text>
+    <text x="330" y="62" fill="#888" font-family="monospace" font-size="12">atan2 result</text>
+
+    <!-- Row 1: -60° -->
+    <text x="30" y="95" fill="#FF6B35" font-family="monospace" font-size="13" font-weight="bold">-60°</text>
+    <text x="130" y="95" fill="#E8D5B7" font-family="monospace" font-size="13">0.35</text>
+    <text x="230" y="95" fill="#E8D5B7" font-family="monospace" font-size="13">-0.08</text>
+    <text x="330" y="95" fill="#E8D5B7" font-family="monospace" font-size="13">-0.224 rad</text>
+    <text x="30" y="112" fill="#888" font-family="monospace" font-size="10">(clamped to -π/3)</text>
+
+    <!-- Row 2: 0° -->
+    <text x="30" y="145" fill="#FFD700" font-family="monospace" font-size="13" font-weight="bold">0°</text>
+    <text x="130" y="145" fill="#E8D5B7" font-family="monospace" font-size="13">0.40</text>
+    <text x="230" y="145" fill="#E8D5B7" font-family="monospace" font-size="13">≈ 0</text>
+    <text x="330" y="145" fill="#E8D5B7" font-family="monospace" font-size="13">≈ 0 rad</text>
+
+    <!-- Row 3: +60° -->
+    <text x="30" y="178" fill="#B849E8" font-family="monospace" font-size="13" font-weight="bold">+60°</text>
+    <text x="130" y="178" fill="#E8D5B7" font-family="monospace" font-size="13">0.35</text>
+    <text x="230" y="178" fill="#E8D5B7" font-family="monospace" font-size="13">+0.06</text>
+    <text x="330" y="178" fill="#E8D5B7" font-family="monospace" font-size="13">+0.170 rad</text>
+    <text x="30" y="195" fill="#888" font-family="monospace" font-size="10">(clamped to +π/3)</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- RIGHT PANEL: Why atan2(dz, dy)               -->
+  <!-- ============================================ -->
+  <g transform="translate(850, 560)">
+    <rect x="0" y="0" width="520" height="180" rx="10" fill="#16213E" stroke="#FFD700" stroke-width="1"/>
+    <text x="260" y="28" text-anchor="middle" fill="#FFD700" font-family="monospace" font-size="15" font-weight="bold">WHY atan2(dz, dy)?</text>
+    <line x1="30" y1="40" x2="490" y2="40" stroke="#FFD700" stroke-width="0.5" opacity="0.3"/>
+
+    <text x="30" y="68" fill="#E8D5B7" font-family="monospace" font-size="12">• Measures angle from vertical (Y axis)</text>
+    <text x="30" y="92" fill="#E8D5B7" font-family="monospace" font-size="12">• dz &lt; 0 = tip closer to camera → negative angle</text>
+    <text x="30" y="116" fill="#E8D5B7" font-family="monospace" font-size="12">• dz &gt; 0 = tip farther from camera → positive angle</text>
+    <text x="30" y="140" fill="#E8D5B7" font-family="monospace" font-size="12">• Works in crystal ball pose (fingers point up)</text>
+    <text x="30" y="164" fill="#E8D5B7" font-family="monospace" font-size="12">• X-Y rotation fails here (no x change when tilting)</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- BOTTOM: Camera direction reference           -->
+  <!-- ============================================ -->
+  <g transform="translate(450, 900)">
+    <rect x="0" y="0" width="370" height="60" rx="8" fill="#16213E" stroke="#888" stroke-width="0.5"/>
+    <text x="185" y="22" text-anchor="middle" fill="#888" font-family="monospace" font-size="12">Camera view: looking at side profile of hand</text>
+    <text x="185" y="42" text-anchor="middle" fill="#888" font-family="monospace" font-size="11">Z &lt; 0 = toward you (closer to camera)  |  Z &gt; 0 = away from you (farther)</text>
+  </g>
+</svg>
