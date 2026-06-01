@@ -27,6 +27,7 @@ lets see this diagram below to easy understanding concept of `atan2()`:
 
 diagram above is represent angle radians between positive/negative x-axis and the ray from (0, 0) to point (-x, y) and point (x, y) so it will use this formula `atan2(y, x)`.
 I will use this function to calculate angle radians from hand rotation, but i need some adjustment. I have decided to make wrist and middle fingertip landmark as base point to detect hand rotation, to be more easy lets define variable for wirst and middle fingertip: wrist => (wrist.z, wrist.y), middle fingertip => (midtip.z, midtip.y). Lets assume that both landmarks placed on y-axis at initial state, and i will be rotate based on z-axis (in mediapipe z-axis is perpendicular to the camera).
+
 Here is the adjustment. What i need is to find angle radians between y-axis and and the rays from joint points between wrist and middle fingertip. If represent to diagram it will be like this.
 
 ![atan2 axis from y to z](images/atan2_z_y_axis.svg)
