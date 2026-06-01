@@ -12,26 +12,28 @@
   <line x1="60" y1="360" x2="420" y2="360" stroke="black" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)" />
   <text x="425" y="365" font-family="Arial, sans-serif" font-size="16" font-style="italic">X</text>
 
-  <!-- Y-axis (positive only) -->
-  <line x1="240" y1="360" x2="240" y2="60" stroke="black" stroke-width="2" marker-end="url(#arrow)" />
-  <text x="245" y="55" font-family="Arial, sans-serif" font-size="16" font-style="italic">Y</text>
+  <!-- Y-axis (positive only, shortened) -->
+  <line x1="240" y1="360" x2="240" y2="100" stroke="black" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="245" y="95" font-family="Arial, sans-serif" font-size="16" font-style="italic">Y</text>
 
   <!-- Origin label -->
   <text x="225" y="380" font-family="Arial, sans-serif" font-size="14">(0, 0)</text>
 
-  <!-- Line to (x, y) at 60° -->
-  <line x1="240" y1="360" x2="315" y2="230.1" stroke="black" stroke-width="2" />
+  <!-- Dashed line to (x, y) at 60° -->
+  <line x1="240" y1="360" x2="315" y2="230.1" stroke="black" stroke-width="2" stroke-dasharray="5,5" />
 
-  <!-- Line to (-x, y) at 120° -->
-  <line x1="240" y1="360" x2="165" y2="230.1" stroke="black" stroke-width="2" />
+  <!-- Dashed line to (-x, y) at 120° -->
+  <line x1="240" y1="360" x2="165" y2="230.1" stroke="black" stroke-width="2" stroke-dasharray="5,5" />
 
-  <!-- Angle arc for 60° -->
-  <path d="M 270 360 A 30 30 0 0 0 255 334" fill="none" stroke="black" stroke-width="1.5" />
+  <!-- Angle arc for 60° (red, no arrow) -->
+  <path d="M 270 360 A 30 30 0 0 0 255 334" fill="none" stroke="red" stroke-width="1.5" />
+  <text x="275" y="325" font-family="Arial, sans-serif" font-size="10">Ø=1.047</text>
   <text x="275" y="345" font-family="Arial, sans-serif" font-size="12">60°</text>
 
-  <!-- Angle arc for 120° (60° from negative X) -->
-  <path d="M 210 360 A 30 30 0 0 1 225 334" fill="none" stroke="black" stroke-width="1.5" />
-  <text x="200" y="345" font-family="Arial, sans-serif" font-size="12">60°</text>
+  <!-- Angle arc for 120° (60° from negative X, red, no arrow) -->
+  <path d="M 210 360 A 30 30 0 0 1 225 334" fill="none" stroke="red" stroke-width="1.5" />
+  <text x="175" y="325" font-family="Arial, sans-serif" font-size="10">Ø=1.047</text>
+  <text x="175" y="345" font-family="Arial, sans-serif" font-size="12">60°</text>
 
   <!-- Dot at (x, y) -->
   <circle cx="315" cy="230.1" r="5" fill="black" />

@@ -3,9 +3,6 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
     </marker>
-    <marker id="arrow-sm" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="red" />
-    </marker>
   </defs>
 
   <!-- Background -->
@@ -48,8 +45,8 @@
   <!-- Label "(wrist)" at center point -->
   <text x="245" y="220" font-family="Arial, sans-serif" font-size="14">(wrist)</text>
 
-  <!-- Label "(depth)" at positive Z edge -->
-  <text x="400" y="220" font-family="Arial, sans-serif" font-size="14">(depth)</text>
+  <!-- Label "(depth)" at left edge -->
+  <text x="60" y="220" font-family="Arial, sans-serif" font-size="14">(depth)</text>
 
   <!-- Label "(z, y)" near right endpoint -->
   <text x="425" y="75" font-family="Arial, sans-serif" font-size="14">(z, y)</text>
@@ -58,12 +55,12 @@
   <text x="10" y="75" font-family="Arial, sans-serif" font-size="14">(-z, y)</text>
 
   <!-- Angle arc: clockwise 60° from Y-axis to right diagonal (reaches diagonal line) -->
-  <path d="M 240 160 A 70 70 0 0 1 293.8 185.2" fill="none" stroke="red" stroke-width="1.5" marker-end="url(#arrow-sm)" />
+  <path d="M 240 160 A 70 70 0 0 1 293.8 185.2" fill="none" stroke="red" stroke-width="1.5" />
   <text x="260" y="155" font-family="Arial, sans-serif" font-size="12">60°</text>
   <text x="260" y="142" font-family="Arial, sans-serif" font-size="10">(Ø=1.047)</text>
 
   <!-- Angle arc: counter-clockwise -60° from Y-axis to left diagonal (reaches diagonal line) -->
-  <path d="M 240 160 A 70 70 0 0 0 186.2 185.2" fill="none" stroke="red" stroke-width="1.5" marker-end="url(#arrow-sm)" />
+  <path d="M 240 160 A 70 70 0 0 0 186.2 185.2" fill="none" stroke="red" stroke-width="1.5" />
   <text x="170" y="155" font-family="Arial, sans-serif" font-size="12">-60°</text>
   <text x="170" y="142" font-family="Arial, sans-serif" font-size="10">(Ø=-1.047)</text>
 
