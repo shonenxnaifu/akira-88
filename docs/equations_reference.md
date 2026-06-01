@@ -47,10 +47,13 @@ Because I need to find the angle in radians between the y-axis and the ray from 
 
 I have defined the max rotation to be 60°, both toward and away from the camera. I have to convert it to radians:
 A full circle contains 2π, so we get the equation like this:
+
 $$
 2\pi = 360°
 $$
+
 If we want to find the radians for 60°, the equation will be like this ($x$ = radians value):
+
 $$
 \begin{equation*}
 \begin{aligned}
@@ -64,16 +67,19 @@ x &= \frac {\pi}{3}
 $$
 
 From the equation above, the radians value will be $\frac{\pi}{3}$ or 1.047 for away from the camera, -1.047 for toward the camera.
+
 $$
 -1.047 \leq angle \leq 1.047
 $$
 
 After the max radians has been calculated, I need to do normalization. Normalization will make the calculation for the parameter that we need easier furthermore. I will normalize to -1 and 1. This normalization is commonly used in DAW (Digital Audio Workstation) applications.
+
 $$
 \begin{equation*}
 \frac {-1.047}{1.047} \leq angle \leq \frac {1.047}{1.047}
 \end{equation*}
 $$
+
 $$
 \begin{equation*}
 -1 \leq angle \leq 1
