@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480">
+  <defs>
+    <style>
+      .axis { stroke: #333; stroke-width: 1.5; }
+      .tick { stroke: #333; stroke-width: 1; }
+      .tick-label { font-family: sans-serif; font-size: 12px; fill: #333; text-anchor: middle; }
+      .tick-label-y { text-anchor: end; dominant-baseline: middle; }
+      .axis-label { font-family: sans-serif; font-size: 14px; font-weight: bold; fill: #333; }
+      .diagonal { stroke: #22c55e; stroke-width: 2.5; }
+      .dashed-line { stroke: #22c55e; stroke-width: 1.5; stroke-dasharray: 6,4; }
+      .slope-label { font-family: sans-serif; font-size: 14px; font-weight: bold; fill: #000; }
+      .joint-label { font-family: sans-serif; font-size: 12px; font-weight: bold; fill: #ef4444; }
+      .dot { fill: #000; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="480" fill="#fff" />
+
+  <!-- Grid lines (light) -->
+  <g stroke="#e5e5e5" stroke-width="0.5">
+    <!-- Vertical grid -->
+    <line x1="162.5" y1="40" x2="162.5" y2="420" />
+    <line x1="255" y1="40" x2="255" y2="420" />
+    <line x1="347.5" y1="40" x2="347.5" y2="420" />
+    <!-- Horizontal grid -->
+    <line x1="70" y1="372.5" x2="440" y2="372.5" />
+    <line x1="70" y1="325" x2="440" y2="325" />
+    <line x1="70" y1="277.5" x2="440" y2="277.5" />
+    <line x1="70" y1="230" x2="440" y2="230" />
+    <line x1="70" y1="182.5" x2="440" y2="182.5" />
+    <line x1="70" y1="135" x2="440" y2="135" />
+    <line x1="70" y1="87.5" x2="440" y2="87.5" />
+  </g>
+
+  <!-- Axes -->
+  <g class="axis">
+    <!-- X-axis -->
+    <line x1="70" y1="420" x2="440" y2="420" />
+    <!-- Y-axis -->
+    <line x1="70" y1="40" x2="70" y2="420" />
+  </g>
+
+  <!-- X-axis ticks and labels -->
+  <g>
+    <line class="tick" x1="70" y1="420" x2="70" y2="425" />
+    <text class="tick-label" x="70" y="440">-1.0</text>
+
+    <line class="tick" x1="162.5" y1="420" x2="162.5" y2="425" />
+    <text class="tick-label" x="162.5" y="440">-0.5</text>
+
+    <line class="tick" x1="255" y1="420" x2="255" y2="425" />
+    <text class="tick-label" x="255" y="440">0.0</text>
+
+    <line class="tick" x1="347.5" y1="420" x2="347.5" y2="425" />
+    <text class="tick-label" x="347.5" y="440">0.5</text>
+
+    <line class="tick" x1="440" y1="420" x2="440" y2="425" />
+    <text class="tick-label" x="440" y="440">1.0</text>
+  </g>
+
+  <!-- Y-axis ticks and labels -->
+  <g>
+    <line class="tick" x1="65" y1="420" x2="70" y2="420" />
+    <text class="tick-label tick-label-y" x="62" y="420">0.1</text>
+
+    <line class="tick" x1="65" y1="372.5" x2="70" y2="372.5" />
+    <text class="tick-label tick-label-y" x="62" y="372.5">0.2</text>
+
+    <line class="tick" x1="65" y1="325" x2="70" y2="325" />
+    <text class="tick-label tick-label-y" x="62" y="325">0.3</text>
+
+    <line class="tick" x1="65" y1="277.5" x2="70" y2="277.5" />
+    <text class="tick-label tick-label-y" x="62" y="277.5">0.4</text>
+
+    <line class="tick" x1="65" y1="230" x2="70" y2="230" />
+    <text class="tick-label tick-label-y" x="62" y="230">0.5</text>
+
+    <line class="tick" x1="65" y1="182.5" x2="70" y2="182.5" />
+    <text class="tick-label tick-label-y" x="62" y="182.5">0.6</text>
+
+    <line class="tick" x1="65" y1="135" x2="70" y2="135" />
+    <text class="tick-label tick-label-y" x="62" y="135">0.7</text>
+
+    <line class="tick" x1="65" y1="87.5" x2="70" y2="87.5" />
+    <text class="tick-label tick-label-y" x="62" y="87.5">0.8</text>
+
+    <line class="tick" x1="65" y1="40" x2="70" y2="40" />
+    <text class="tick-label tick-label-y" x="62" y="40">0.9</text>
+  </g>
+
+  <!-- Axis labels -->
+  <text class="axis-label" x="25" y="230" transform="rotate(-90, 25, 230)" text-anchor="middle">delay</text>
+  <text class="axis-label" x="255" y="465" text-anchor="middle">angle</text>
+
+  <!-- Dashed horizontal line at y=0.9 -->
+  <line class="dashed-line" x1="70" y1="40" x2="440" y2="40" />
+
+  <!-- Dashed vertical line at x=1 -->
+  <line class="dashed-line" x1="440" y1="420" x2="440" y2="40" />
+
+  <!-- Diagonal ray from (-1, 0.1) to (1, 0.9) -->
+  <line class="diagonal" x1="70" y1="420" x2="440" y2="40" />
+
+  <!-- Joint at (0.6, 0.74) -->
+  <line class="dashed-line" x1="70" y1="116" x2="366" y2="116" />
+  <line class="dashed-line" x1="366" y1="420" x2="366" y2="116" />
+  <circle class="dot" cx="366" cy="116" r="5" />
+
+  <!-- Black dot at (1, 0.9) -->
+  <circle class="dot" cx="440" cy="40" r="5" />
+
+  <!-- Joint labels -->
+  <text class="joint-label" x="376" y="268" text-anchor="start">x=0.6</text>
+  <text class="joint-label" x="218" y="106" text-anchor="middle">y=0.74</text>
+  <text class="slope-label" x="430" y="32" text-anchor="end" font-size="12px">(x₂=1, y₂=0.9)</text>
+  <text class="slope-label" x="78" y="412" text-anchor="start" font-size="12px">(x₁=-1, y₁=0.1)</text>
+
+  <!-- Slope label "slope (ꭤ)" along the diagonal -->
+  <text class="slope-label" x="230" y="255" transform="rotate(-45.6, 230, 255)" text-anchor="middle">slope (ꭤ)</text>
+</svg>

@@ -17,7 +17,7 @@
 ### `Math.atan2(y, x)` function
 
 > The `Math.atan2()` static method returns the angle in the plane (in radians) between the positive x-axis and the ray from (0, 0) to (x, y), for Math.atan(y, x).
-Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2)
+> <br>Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2)
 
 The `atan2()` function is essentially the inverse of the `atan()` function. To understand how `atan2()` works, you first need to understand `atan()`. I won't go into a deep dive on these functions here. If you'd like more details, see this reference from [CSS-Tricks](https://css-tricks.com/almanac/functions/a/atan2/).
 
@@ -91,3 +91,31 @@ $$
 -1 \leq \frac {angle}{1.047} \leq 1
 \end{equation*}
 $$
+
+## Mapping Parameter Output
+
+### Linear Interpolation
+> In mathematics, linear interpolation (sometimes lerp) is a method of curve fitting using linear polynomials to construct new data points within the range of a discrete set of known data points.
+> <br>Source: [Wikipedia](https://en.wikipedia.org/wiki/Linear_interpolation)
+
+#### Why?
+In this apps there are 3 instruments, each with 3 parameters. I will use bass instrument and its delay parameter as an example. The delay in Tone.js has a range from 0.0 to 1.0, but i will use 0.1 to 0.9. Because my application can change output parameter using hand rotation gesture, I need to map the rotation range to the delay range. To achieve this, I use **Linear Interpolation**.
+
+#### How?
+**Linear Interpolation** is commonly used in animation movement. Let's look at the diagram below.
+
+![Linear Interpolation](images/linear-interpolation.svg)
+
+> at the initial state, (y) value is not defined yet. Assume that (y) value is unkown.
+
+based on diagram above, got these variables and values.
+
+\begin{flalign*}
+x_1 = -1
+\\
+x_2 = 1
+\\
+y_1 = 0.1
+\\
+y_2 = 0.9
+\end{flalign*}
