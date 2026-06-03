@@ -110,12 +110,8 @@ In this apps there are 3 instruments, each with 3 parameters. I will use bass in
 
 based on diagram above, got these variables and values.
 
-\begin{flalign*}
-x_1 = -1
-\\
-x_2 = 1
-\\
-y_1 = 0.1
-\\
-y_2 = 0.9
-\end{flalign*}
+$x_1 = -1$  
+$x_2 = 1$  
+$y_1 = 0.1$  
+$y_2 = 0.9$
+
