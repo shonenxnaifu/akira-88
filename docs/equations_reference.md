@@ -145,6 +145,7 @@ $$
 That formula is used to find the value of ($y$) for a given ($x$), where ($x$) is the radians value from hand rotation in the range of -1 to 1 ($x_1$ to $x_2$). The variable ($y$) is the delay value in the range of 0.0 to 0.9 ($y_1$ to $y_2$). This formula causes the delay value to change based on hand rotation.
 
 The formula can be simplified because the rotation range is constant, from -1 to 1 ($x_1$ to $x_2$). The parameter range for each instrument may have different values, so ($y_1$ to $y_2$) remains variable.
+
 $$
 \begin{aligned}
 &slop(\alpha)=\frac{y_2-y_1}{x_2-x_1} \\
