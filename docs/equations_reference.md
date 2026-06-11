@@ -1,11 +1,13 @@
 # Equations Reference
 
 ## Overview
+
 - **Version**: 0.0.1
 - **Description**: Documentation about equations used in this app
 - **Reference**: Linear Interpolation, `Math.atan2(y, x)`
 
 ## Table of Contents
+
 - **Hand Rotation**
   - `Math.atan2(y, x)` function
   - Normalization
@@ -17,7 +19,7 @@
 ### `Math.atan2(y, x)` function
 
 > The `Math.atan2()` static method returns the angle in the plane (in radians) between the positive x-axis and the ray from (0, 0) to (x, y), for Math.atan(y, x).
-> <br>Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2)
+> <br/> Source: [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2)
 
 The `atan2()` function is essentially the inverse of the `atan()` function. To understand how `atan2()` works, you first need to understand `atan()`. I won't go into a deep dive on these functions here. If you'd like more details, see this reference from [CSS-Tricks](https://css-tricks.com/almanac/functions/a/atan2/).
 
@@ -26,15 +28,14 @@ Let's look at the diagram below to understand the concept of `atan2()` more easi
 ![atan2 axis](images/atan2_diagram.svg)
 
 The diagram above represents the angle in radians between the positive/negative x-axis and the ray from (0, 0) to point (-x, y) and point (x, y), using the formula `atan2(y, x)`. I will use this function to calculate the angle in radians from hand rotation, but I need some adjustments.
-<br>
+<br/>
 I decided to use the wrist and middle fingertip landmarks as the base points to detect hand rotation. For simplicity, let's define variables for the wrist and middle fingertip as follows.
 
 - wrist => (wrist.z, wrist.y)
-- middle fingertip => (midtip.z, midtip.y). 
-
+- middle fingertip => (midtip.z, midtip.y).
 
 Assume that both landmarks are placed on the y-axis in the initial state, and that the rotation happens around the z-axis (in MediaPipe, the z-axis is perpendicular to the camera).
-<br>
+<br/>
 What I need is the angle in radians between the y-axis and the ray from the joint formed by the wrist and middle fingertip. If i represent this in a diagram, it looks like this.
 
 ![atan2 axis from y to z](images/atan2_z_y_axis.svg)
@@ -44,6 +45,7 @@ I make the wrist the pivot point, because `atan2()` calculates the angle of the 
 $$
 Δy = wrist.y - midtip.y
 $$
+
 $$
 Δz = midtip.z - wrist.z
 $$
@@ -63,7 +65,7 @@ To find the radians value for 60°, let ($x$) be the value in radians.
 $$
 \begin{equation*}
 \begin{aligned}
-\frac {x}{2\pi} &= \frac {60}{360} 
+\frac {x}{2\pi} &= \frac {60}{360}
 \\
 x &= \frac {120\pi} {360}
 \\
@@ -95,23 +97,47 @@ $$
 ## Mapping Parameter Output
 
 ### Linear Interpolation
+
 > In mathematics, linear interpolation (sometimes lerp) is a method of curve fitting using linear polynomials to construct new data points within the range of a discrete set of known data points.
-> <br>Source: [Wikipedia](https://en.wikipedia.org/wiki/Linear_interpolation)
+> <br/>Source: [Wikipedia](https://en.wikipedia.org/wiki/Linear_interpolation)
 
 #### Why?
-In this apps there are 3 instruments, each with 3 parameters. I will use bass instrument and its delay parameter as an example. The delay in Tone.js has a range from 0.0 to 1.0, but i will use 0.1 to 0.9. Because my application can change output parameter using hand rotation gesture, I need to map the rotation range to the delay range. To achieve this, I use **Linear Interpolation**.
+
+In this apps there are 3 instruments, each with 3 parameters. I will use bass instrument and its delay parameter as an example. The delay in Tone.js has a range from 0.0 to 1.0, but i will use 0.1 to 0.9. Because my application can change output parameter using hand rotation gesture, I need to map the rotation range (-1 to 1) to the delay range (0.1 to 0.9). To achieve this, I use **Linear Interpolation**.
 
 #### How?
+
 **Linear Interpolation** is commonly used in animation movement. Let's look at the diagram below.
 
 ![Linear Interpolation](images/linear-interpolation.svg)
 
 > at the initial state, (y) value is not defined yet. Assume that (y) value is unkown.
 
-based on diagram above, got these variables and values.
+based on diagram above, i mapped the variables and the values like this.
 
-$x_1 = -1$  
-$x_2 = 1$  
-$y_1 = 0.1$  
-$y_2 = 0.9$
+$$
+\begin{aligned}
+& x_1 = -1 \\
+& x_2 = 1 \\
+& y_1 = 0.1 \\
+& y_2 = 0.9 \\
+\end{aligned}
+$$
 
+<br/>
+
+($x_1$) is min rotation and ($x_2$) is max rotation. ($y_1$) is min delay value and ($y_2$) is max delay value. Those data will used to find slope ($\alpha$). In Linear Interpolation slope is constant straight line between two known data points, based on graph above slope is data points from ($x_1$, $y_1$) to ($x_2$, $y_2$).
+
+$$
+\begin{aligned}
+slop(\alpha)=\frac{y_2-y_1}{x_2-x_1}
+\end{aligned}
+$$
+
+Linear Interpolation has formula like this.
+
+$$
+\begin{aligned}
+y_1+\alpha(x-x_1)
+\end{aligned}
+$$
