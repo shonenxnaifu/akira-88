@@ -126,7 +126,7 @@ $$
 
 <br/>
 
-($x_1$) is min rotation and ($x_2$) is max rotation. ($y_1$) is min delay value and ($y_2$) is max delay value. Those data will used to find slope ($\alpha$). In Linear Interpolation slope is constant straight line between two known data points, based on graph above slope is data points from ($x_1$, $y_1$) to ($x_2$, $y_2$).
+Variable ($x_1$) is the min rotation, and ($x_2$) is the max rotation. Variable ($y_1$) is the min delay value, and ($y_2$) is the max delay value. These values are used to find the slope ($\alpha$). In Linear Interpolation, the slope is constant along straight line between two known data points. Based on the graph above, the slope is defined by the points ($x_1$, $y_1$) and ($x_2$, $y_2$).
 
 $$
 \begin{aligned}
@@ -134,10 +134,30 @@ slop(\alpha)=\frac{y_2-y_1}{x_2-x_1}
 \end{aligned}
 $$
 
-Linear Interpolation has formula like this.
+Linear Interpolation has the following formula.
 
 $$
 \begin{aligned}
 y_1+\alpha(x-x_1)
+\end{aligned}
+$$
+
+That formula is used to find the value of ($y$) for a given ($x$), where ($x$) is the radians value from hand rotation in the range of -1 to 1 ($x_1$ to $x_2$). The variable ($y$) is the delay value in the range of 0.0 to 0.9 ($y_1$ to $y_2$). This formula causes the delay value to change based on hand rotation.
+
+The formula can be simplified because the rotation range is constant, from -1 to 1 ($x_1$ to $x_2$). The parameter range for each instrument may have different values, so ($y_1$ to $y_2$) remains variable.
+$$
+\begin{aligned}
+&slop(\alpha)=\frac{y_2-y_1}{x_2-x_1} \\
+&slop(\alpha)=\frac{y_2-y_1}{1-(-1)} \\
+&slop(\alpha)=\frac{y_2-y_1}{2}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+& y=y_1+\alpha(x-x_1) \\
+& y=y_1+\frac{y_2-y_1}{2}(x-x_1) \\
+& y=y_1+\frac{y_2-y_1}{2}(x-(-1)) \\
+& y=y_1+(y_2-y_1)\frac{x+1}{2}
 \end{aligned}
 $$
