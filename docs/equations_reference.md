@@ -13,6 +13,7 @@
   - Normalization
 - **Mapping Parameter Output**
   - Linear Interpolation
+- **Examples**
 
 ## **Hand Rotation**
 
@@ -162,3 +163,46 @@ $$
 & y=y_1+(y_2-y_1)\frac{x+1}{2}
 \end{aligned}
 $$
+
+## Examples
+Let's assign values to create a simulation. Assume the hand rotates away from camera by about $30\degree$, and the landmarks have values like these.
+
+$$
+\begin{aligned}
+& wrist.z = 0 \\
+& middleTip.z = 0.1256 \\
+& wrist.y = 0.70 \\
+& middleTip.y = 0.50 \\
+\end{aligned}
+$$
+
+The radians value can be calculated as follows.
+$$
+\begin{aligned}
+& dy = wrist.y - midtip.y \\
+& dz = midtip.z - wrist.z \\
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+& dy = 0.70 - 0.50 \\
+& dz = 0.1256 - 0 \\
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+& Math.atan2(dz, dy)= 0.5607
+\end{aligned}
+$$
+
+The radians value is `0.5607`, but it needs to be normalized, so the result is as follows.
+$$
+\begin{aligned}
+& \frac{0.5607}{1.047}=0.53454
+\end{aligned}
+$$
+
+The radians value `0.5607` that found earlier is ($x$). The remaining step is to find the delay value, which is ($y$).   
