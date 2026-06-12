@@ -177,6 +177,7 @@ $$
 $$
 
 The radians value can be calculated as follows.
+
 $$
 \begin{aligned}
 & dy = wrist.y - midtip.y \\
@@ -199,6 +200,7 @@ $$
 $$
 
 The radians value is `0.5607`, but it needs to be normalized, so the result is as follows.
+
 $$
 \begin{aligned}
 & \frac{0.5607}{1.047}=0.53454
