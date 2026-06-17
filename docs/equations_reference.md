@@ -210,12 +210,12 @@ $$
 The radians value `0.5355` that found earlier is ($x$). The remaining step is to find the delay value, which is ($y$).
 
 I will use the simplified formula defined earlier.
+
 $$
 \begin{aligned}
 & y=y_1+(y_2-y_1)\times\frac{x+1}{2} \\
 \end{aligned}
 $$
-
 
 $$
 \begin{aligned}
