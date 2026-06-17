@@ -121,7 +121,7 @@ $$
 & x_1 = -1 \\
 & x_2 = 1 \\
 & y_1 = 0.1 \\
-& y_2 = 0.9 \\
+& y_2 = 1 \\
 \end{aligned}
 $$
 
@@ -139,7 +139,7 @@ Linear Interpolation has the following formula.
 
 $$
 \begin{aligned}
-y_1+\alpha(x-x_1)
+y_1+\alpha\times(x-x_1)
 \end{aligned}
 $$
 
@@ -157,10 +157,10 @@ $$
 
 $$
 \begin{aligned}
-& y=y_1+\alpha(x-x_1) \\
-& y=y_1+\frac{y_2-y_1}{2}(x-x_1) \\
-& y=y_1+\frac{y_2-y_1}{2}(x-(-1)) \\
-& y=y_1+(y_2-y_1)\frac{x+1}{2}
+& y=y_1+\alpha\times(x-x_1) \\
+& y=y_1+\frac{y_2-y_1}{2}\times(x-x_1) \\
+& y=y_1+\frac{y_2-y_1}{2}\times(x-(-1)) \\
+& y=y_1+(y_2-y_1)\times\frac{x+1}{2}
 \end{aligned}
 $$
 
@@ -203,8 +203,27 @@ The radians value is `0.5607`, but it needs to be normalized, so the result is a
 
 $$
 \begin{aligned}
-& \frac{0.5607}{1.047}=0.53454
+& \frac{0.5607}{1.047}=0.5355
 \end{aligned}
 $$
 
-The radians value `0.5607` that found earlier is ($x$). The remaining step is to find the delay value, which is ($y$).   
+The radians value `0.5355` that found earlier is ($x$). The remaining step is to find the delay value, which is ($y$).
+
+I will use the simplified formula defined earlier.
+$$
+\begin{aligned}
+& y=y_1+(y_2-y_1)\times\frac{x+1}{2} \\
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}
+& y=0.1+(1-0.1)\times\frac{0.5355+1}{2} \\
+& y=0.1+0.9\times0.7677 \\
+& y=0.1+0.6909 \\
+& y=0.7909
+\end{aligned}
+$$
+
+The delay value ($y$) is `0.7909`.
