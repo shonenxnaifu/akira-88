@@ -207,6 +207,19 @@ $$
 \end{aligned}
 $$
 
+The formula will be implemented in `calculateZTilt` function. In the following code, the `Math.max` function is prevent the angle in radians from exceeding the limit defined earlier.
+
+```typescript
+export function calculateZTilt(landmarks) {
+  const wrist = landmarks[0];
+  const middleTip = landmarks[12];
+  const dy = wrist.y - middleTip.y;
+  const dz = middleTip.z - wrist.z;
+  const rawAngle = Math.atan2(dz, dy);
+  return Math.max(-MAX_Z_TILT, Math.min(MAX_Z_TILT, rawAngle));
+}
+```
+
 The radians value `0.5355` that found earlier is ($x$). The remaining step is to find the delay value, which is ($y$).
 
 I will use the simplified formula defined earlier.
@@ -227,3 +240,12 @@ $$
 $$
 
 The delay value ($y$) is `0.7909`.
+
+The formula will be implemented in `updateBassParams` function. The `params.delay` value is an angle in radians, wich is used as the input variable ($x$).
+
+```typescript
+  const feedback = 0.1 + ((params.delay + 1) / 2) * (1 - 0.1);
+  delay.feedback.value = feedback;
+
+```
+
